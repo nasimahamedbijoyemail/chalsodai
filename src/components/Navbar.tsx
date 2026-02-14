@@ -31,7 +31,7 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-2xl font-bold text-primary">🌾</span>
-          <span className="text-xl font-bold text-primary">চাল দোকান</span>
+          <span className="text-xl font-bold text-primary">চাল বাজার</span>
         </Link>
 
         {/* Desktop nav */}

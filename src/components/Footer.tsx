@@ -21,7 +21,7 @@ const Footer = () => {
       <div className="container py-10">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">🌾 চাল দোকান</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">🌾 চাল বাজার</h3>
             <p className="text-sm text-muted-foreground">
               ঢাকা শহরে বিশ্বস্ত চাল সরবরাহকারী। সেরা মানের চাল সরাসরি আপনার দোরগোড়ায়।
             </p>
@@ -54,7 +54,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          © ২০২৬ চাল দোকান। সর্বস্বত্ব সংরক্ষিত।
+          © ২০২৬ চাল বাজার। সর্বস্বত্ব সংরক্ষিত।
         </div>
       </div>
     </footer>
