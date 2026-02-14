@@ -5,7 +5,18 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Loader2, Search, Ban, Check } from 'lucide-react';
+import { Loader2, Search, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Profile {
   id: string;
@@ -26,6 +37,7 @@ const AdminCustomers = () => {
   const [roles, setRoles] = useState<Map<string, 'admin' | 'customer'>>(new Map());
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchData = async () => {
     const [profilesRes, rolesRes] = await Promise.all([
@@ -49,17 +61,34 @@ const AdminCustomers = () => {
   const toggleAdmin = async (userId: string, isCurrentlyAdmin: boolean) => {
     try {
       if (isCurrentlyAdmin) {
-        // Remove admin role
         await supabase.from('user_roles').delete().eq('user_id', userId).eq('role', 'admin');
         toast.success('অ্যাডমিন রোল সরানো হয়েছে');
       } else {
-        // Add admin role
         await supabase.from('user_roles').insert({ user_id: userId, role: 'admin' });
         toast.success('অ্যাডমিন রোল দেওয়া হয়েছে');
       }
       fetchData();
     } catch (error) {
       toast.error('আপডেট করতে সমস্যা হয়েছে');
+    }
+  };
+
+  const deleteCustomer = async (userId: string) => {
+    setDeletingId(userId);
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-delete-user', {
+        body: { target_user_id: userId },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      toast.success('কাস্টমারের অ্যাকাউন্ট সম্পূর্ণ মুছে ফেলা হয়েছে');
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.message || 'ডিলিট করতে সমস্যা হয়েছে');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -101,6 +130,7 @@ const AdminCustomers = () => {
         <div className="space-y-3">
           {filteredProfiles.map((profile) => {
             const isAdmin = roles.get(profile.user_id) === 'admin';
+            const isDeleting = deletingId === profile.user_id;
             return (
               <div key={profile.id} className="rounded-xl border bg-card p-4">
                 <div className="flex flex-wrap items-center justify-between gap-4">
@@ -122,6 +152,30 @@ const AdminCustomers = () => {
                         onCheckedChange={() => toggleAdmin(profile.user_id, isAdmin)}
                       />
                     </div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm" disabled={isDeleting || isAdmin}>
+                          {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>কাস্টমার ডিলিট করুন</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            <strong>{profile.full_name || 'এই কাস্টমার'}</strong> এর সম্পূর্ণ অ্যাকাউন্ট ও ডাটা মুছে ফেলা হবে। এরপর তিনি নতুন পাসওয়ার্ড দিয়ে আবার সাইন আপ করতে পারবেন। এই কাজটি ফেরানো যাবে না।
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>বাতিল</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteCustomer(profile.user_id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            হ্যাঁ, ডিলিট করুন
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </div>
