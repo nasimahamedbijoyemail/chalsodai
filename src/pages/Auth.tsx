@@ -83,7 +83,7 @@ const Auth = () => {
     <div className="container py-16 max-w-md">
       <div className="rounded-xl border bg-card p-8">
         <h1 className="text-2xl font-bold text-center mb-6">
-          {isLogin ? 'চাল দোকানে লগইন করুন' : 'অ্যাকাউন্ট তৈরি করুন'}
+          {isLogin ? 'চাল বাজারে লগইন করুন' : 'অ্যাকাউন্ট তৈরি করুন'}
         </h1>
 
         {/* Auth method toggle */}
