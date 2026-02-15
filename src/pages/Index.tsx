@@ -50,7 +50,7 @@ const Index = () => {
       <section className="overflow-hidden">
         <img
           src={heroImage}
-          alt="চাল বাজার হিরো"
+          alt="চাল সদাই হিরো"
           className="w-full max-h-[420px] object-cover"
         />
         <div className="bg-[#1a4a2e] py-6 md:py-8">
