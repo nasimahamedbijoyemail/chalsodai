@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import PageTransition from '@/components/PageTransition';
+import ProductReviews from '@/components/ProductReviews';
 
 interface Product {
   id: string;
@@ -161,6 +162,9 @@ const ProductDetail = () => {
             )}
           </motion.div>
         </div>
+
+        {/* Reviews Section */}
+        <ProductReviews productId={product.id} />
       </div>
     </PageTransition>
   );
