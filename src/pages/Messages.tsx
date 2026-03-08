@@ -228,7 +228,7 @@ const Messages = () => {
   }
 
   return (
-    <div className="container py-10 max-w-2xl">
+    <div className="container py-10 pb-24 md:pb-10 max-w-2xl">
       <PageHead title="মেসেজ" />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">মেসেজ</h1>
