@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Package, ShoppingBag, Users, TrendingUp, Clock, Crown, UserPlus, ArrowRight } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend } from 'recharts';
+import { Button } from '@/components/ui/button';
+import {
+  Package, ShoppingBag, Users, TrendingUp, Clock, Crown, UserPlus,
+  ArrowRight, ArrowUpRight, ArrowDownRight, Wallet,
+} from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart, Line, PieChart, Pie, Cell, Legend, Area, AreaChart,
+} from 'recharts';
 
+/* ─── types ─── */
 interface Stats {
   customers: number;
   orders: number;
@@ -43,6 +51,7 @@ interface TopProduct {
   total_revenue: number;
 }
 
+/* ─── constants ─── */
 const statusLabels: Record<string, string> = {
   pending: 'পেমেন্ট অপেক্ষায়',
   payment_received: 'পেমেন্ট গৃহীত',
@@ -63,6 +72,55 @@ const statusColors: Record<string, 'default' | 'secondary' | 'destructive' | 'ou
 
 const MONTH_NAMES_BN = ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রি', 'মে', 'জুন', 'জুলা', 'আগ', 'সেপ্টে', 'অক্টো', 'নভে', 'ডিসে'];
 
+const PIE_COLORS = [
+  'hsl(145, 45%, 35%)',
+  'hsl(38, 60%, 55%)',
+  'hsl(220, 60%, 55%)',
+  'hsl(25, 50%, 40%)',
+  'hsl(0, 65%, 55%)',
+  'hsl(270, 50%, 55%)',
+];
+
+/* ─── sub-components ─── */
+const StatCard = ({ title, value, icon: Icon, color, trend, loading }: {
+  title: string; value: string | number; icon: React.ElementType; color: string; trend?: number; loading: boolean;
+}) => (
+  <Card className="relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
+    <div className={`absolute top-0 right-0 w-20 h-20 rounded-bl-[3rem] opacity-[0.07] ${color.replace('text-', 'bg-')}`} />
+    <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
+      <CardTitle className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {title}
+      </CardTitle>
+      <div className={`flex items-center justify-center h-8 w-8 rounded-lg bg-muted/80 ${color}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+    </CardHeader>
+    <CardContent className="px-4 pb-4 pt-0">
+      <div className="text-xl sm:text-2xl font-bold tracking-tight">
+        {loading ? <span className="inline-block w-16 h-6 bg-muted animate-pulse rounded" /> : value}
+      </div>
+      {trend !== undefined && !loading && (
+        <div className={`flex items-center gap-1 mt-1 text-xs font-medium ${trend >= 0 ? 'text-emerald-600' : 'text-destructive'}`}>
+          {trend >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+          <span>{Math.abs(trend)}% গত মাসের তুলনায়</span>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+);
+
+const SectionHeader = ({ title, linkTo, linkLabel }: { title: string; linkTo: string; linkLabel: string }) => (
+  <CardHeader className="flex flex-row items-center justify-between pb-3">
+    <CardTitle className="text-sm sm:text-base font-semibold">{title}</CardTitle>
+    <Button variant="ghost" size="sm" asChild className="text-xs text-primary hover:text-primary/80 gap-1 h-7 px-2">
+      <Link to={linkTo}>
+        {linkLabel} <ArrowRight className="h-3 w-3" />
+      </Link>
+    </Button>
+  </CardHeader>
+);
+
+/* ─── main ─── */
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({ customers: 0, orders: 0, products: 0, pendingOrders: 0, totalRevenue: 0, deliveredOrders: 0 });
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
@@ -88,7 +146,6 @@ const AdminDashboard = () => {
       const deliveredOrders = orders.filter(o => o.status === 'delivered');
       const totalRevenue = deliveredOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
 
-      // Calculate top products
       const productMap = new Map<string, { total_qty: number; total_revenue: number }>();
       (orderItemsRes.data || []).forEach((item) => {
         const existing = productMap.get(item.product_name) || { total_qty: 0, total_revenue: 0 };
@@ -118,6 +175,7 @@ const AdminDashboard = () => {
     fetchStats();
   }, []);
 
+  /* ─── chart data ─── */
   const monthlyData = useMemo(() => {
     const map = new Map<string, { revenue: number; orders: number; month: string }>();
     const now = new Date();
@@ -132,9 +190,7 @@ const AdminDashboard = () => {
       const entry = map.get(key);
       if (entry) {
         entry.orders += 1;
-        if (order.status === 'delivered') {
-          entry.revenue += order.total_amount || 0;
-        }
+        if (order.status === 'delivered') entry.revenue += order.total_amount || 0;
       }
     });
     return Array.from(map.values());
@@ -142,126 +198,131 @@ const AdminDashboard = () => {
 
   const statusDistribution = useMemo(() => {
     const countMap = new Map<string, number>();
-    allOrders.forEach((o) => {
-      countMap.set(o.status, (countMap.get(o.status) || 0) + 1);
-    });
+    allOrders.forEach((o) => countMap.set(o.status, (countMap.get(o.status) || 0) + 1));
     return Array.from(countMap.entries()).map(([status, count]) => ({
       name: statusLabels[status] || status,
       value: count,
     }));
   }, [allOrders]);
 
-  const PIE_COLORS = [
-    'hsl(38, 60%, 55%)',   // secondary/gold
-    'hsl(145, 45%, 28%)',  // primary/green
-    'hsl(220, 60%, 55%)',  // blue
-    'hsl(25, 50%, 40%)',   // accent/earth
-    'hsl(0, 84%, 60%)',    // destructive
-    'hsl(270, 50%, 55%)',  // violet
-  ];
-
   const statCards = [
-    { title: 'মোট রেভেনিউ', value: `৳${stats.totalRevenue.toLocaleString('bn-BD')}`, icon: TrendingUp, color: 'text-emerald-600' },
-    { title: 'পেন্ডিং অর্ডার', value: stats.pendingOrders, icon: Clock, color: 'text-orange-600' },
+    { title: 'মোট রেভেনিউ', value: `৳${stats.totalRevenue.toLocaleString('bn-BD')}`, icon: Wallet, color: 'text-emerald-600' },
+    { title: 'পেন্ডিং অর্ডার', value: stats.pendingOrders, icon: Clock, color: 'text-orange-500' },
     { title: 'মোট অর্ডার', value: stats.orders, icon: ShoppingBag, color: 'text-blue-600' },
     { title: 'মোট কাস্টমার', value: stats.customers, icon: Users, color: 'text-violet-600' },
-    { title: 'ডেলিভারি সম্পন্ন', value: stats.deliveredOrders, icon: ShoppingBag, color: 'text-emerald-600' },
-    { title: 'মোট চাল', value: stats.products, icon: Package, color: 'text-amber-600' },
+    { title: 'ডেলিভারি সম্পন্ন', value: stats.deliveredOrders, icon: TrendingUp, color: 'text-primary' },
+    { title: 'মোট প্রোডাক্ট', value: stats.products, icon: Package, color: 'text-secondary' },
   ];
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">ড্যাশবোর্ড</h1>
+  const chartTooltipStyle = {
+    borderRadius: '10px',
+    fontSize: '12px',
+    border: '1px solid hsl(var(--border))',
+    backgroundColor: 'hsl(var(--card))',
+    color: 'hsl(var(--foreground))',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+  };
 
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">ড্যাশবোর্ড</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">আপনার ব্যবসার সারাংশ</p>
+        </div>
+        <Badge variant="outline" className="text-[10px] sm:text-xs gap-1.5 px-2.5 py-1 border-primary/30 text-primary">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+          </span>
+          লাইভ
+        </Badge>
+      </div>
+
+      {/* Stat Cards */}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
         {statCards.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl sm:text-3xl font-bold">{loading ? '...' : stat.value}</div>
-            </CardContent>
-          </Card>
+          <StatCard key={stat.title} {...stat} loading={loading} />
         ))}
       </div>
 
-      {/* Monthly Charts */}
+      {/* Charts Row */}
       {!loading && monthlyData.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-2 mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg">মাসভিত্তিক রেভেনিউ</CardTitle>
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Revenue Chart */}
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm sm:text-base font-semibold">মাসভিত্তিক রেভেনিউ</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={monthlyData} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
-                  <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `৳${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
-                  <Tooltip
-                    formatter={(value: number) => [`৳${value.toLocaleString('bn-BD')}`, 'রেভেনিউ']}
-                    contentStyle={{ borderRadius: '8px', fontSize: '13px', border: '1px solid hsl(var(--border))' }}
-                  />
-                  <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <CardContent className="pl-1 pr-3">
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={monthlyData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(145, 45%, 35%)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(145, 45%, 35%)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `৳${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
+                  <Tooltip formatter={(value: number) => [`৳${value.toLocaleString('bn-BD')}`, 'রেভেনিউ']} contentStyle={chartTooltipStyle} />
+                  <Area type="monotone" dataKey="revenue" stroke="hsl(145, 45%, 35%)" strokeWidth={2} fill="url(#revenueGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Orders Chart */}
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm sm:text-base font-semibold">মাসভিত্তিক অর্ডার</CardTitle>
+            </CardHeader>
+            <CardContent className="pl-1 pr-3">
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={monthlyData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(38, 60%, 55%)" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="hsl(38, 60%, 45%)" stopOpacity={0.6} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" allowDecimals={false} />
+                  <Tooltip formatter={(value: number) => [value, 'অর্ডার']} contentStyle={chartTooltipStyle} />
+                  <Bar dataKey="orders" fill="url(#barGrad)" radius={[6, 6, 0, 0]} barSize={28} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg">মাসভিত্তিক অর্ডার</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={monthlyData} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
-                  <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
-                  <Tooltip
-                    formatter={(value: number) => [value, 'অর্ডার']}
-                    contentStyle={{ borderRadius: '8px', fontSize: '13px', border: '1px solid hsl(var(--border))' }}
-                  />
-                  <Line type="monotone" dataKey="orders" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Order Status Pie Chart */}
+          {/* Status Pie */}
           {statusDistribution.length > 0 && (
-            <Card className="md:col-span-2 lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">অর্ডার স্ট্যাটাস</CardTitle>
+            <Card className="md:col-span-2">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm sm:text-base font-semibold">অর্ডার স্ট্যাটাস বিন্যাস</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={220}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={statusDistribution}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
-                      outerRadius={85}
-                      paddingAngle={3}
+                      innerRadius={45}
+                      outerRadius={80}
+                      paddingAngle={4}
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      labelLine={false}
-                      style={{ fontSize: '11px' }}
+                      stroke="none"
                     >
                       {statusDistribution.map((_, i) => (
                         <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip
-                      formatter={(value: number, name: string) => [value, name]}
-                      contentStyle={{ borderRadius: '8px', fontSize: '13px', border: '1px solid hsl(var(--border))' }}
-                    />
-                    <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px' }} />
+                    <Tooltip formatter={(value: number, name: string) => [value, name]} contentStyle={chartTooltipStyle} />
+                    <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '11px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -270,72 +331,61 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Bottom grid: Recent Orders + Top Products + Recent Customers */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-6">
+      {/* Bottom Grid: Orders / Top Products / Customers */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Recent Orders */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base sm:text-lg">সাম্প্রতিক অর্ডার</CardTitle>
-            <Link to="/admin/orders" className="text-xs text-primary hover:underline flex items-center gap-1">
-              সব দেখুন <ArrowRight className="h-3 w-3" />
-            </Link>
-          </CardHeader>
-          <CardContent>
+        <Card>
+          <SectionHeader title="সাম্প্রতিক অর্ডার" linkTo="/admin/orders" linkLabel="সব দেখুন" />
+          <CardContent className="pt-0">
             {loading ? (
-              <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+              <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-12 bg-muted animate-pulse rounded-lg" />)}</div>
             ) : recentOrders.length === 0 ? (
-              <p className="text-muted-foreground text-sm">কোনো অর্ডার নেই</p>
+              <p className="text-center text-sm text-muted-foreground py-6">কোনো অর্ডার নেই</p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {recentOrders.map((order) => (
-                  <div key={order.id} className="flex items-center justify-between gap-2 py-2 border-b last:border-0">
+                  <Link
+                    key={order.id}
+                    to={`/admin/orders`}
+                    className="flex items-center justify-between gap-2 p-2.5 rounded-lg hover:bg-muted/60 transition-colors group"
+                  >
                     <div className="min-w-0">
-                      <p className="font-medium text-sm truncate">{order.order_number}</p>
-                      <p className="text-xs text-muted-foreground truncate">{order.customer_name}</p>
+                      <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">{order.order_number}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{order.customer_name}</p>
                     </div>
-                    <div className="text-right shrink-0">
+                    <div className="text-right shrink-0 space-y-0.5">
                       <span className="text-sm font-bold text-primary block">৳{order.total_amount}</span>
-                      <Badge variant={statusColors[order.status] || 'secondary'} className="text-[10px]">
+                      <Badge variant={statusColors[order.status] || 'secondary'} className="text-[9px] px-1.5 py-0">
                         {statusLabels[order.status] || order.status}
                       </Badge>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Top Selling Products */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Crown className="h-4 w-4 text-secondary" />
-              টপ সেলিং চাল
-            </CardTitle>
-            <Link to="/admin/products" className="text-xs text-primary hover:underline flex items-center gap-1">
-              সব দেখুন <ArrowRight className="h-3 w-3" />
-            </Link>
-          </CardHeader>
-          <CardContent>
+        {/* Top Products */}
+        <Card>
+          <SectionHeader title="টপ সেলিং চাল" linkTo="/admin/products" linkLabel="সব দেখুন" />
+          <CardContent className="pt-0">
             {loading ? (
-              <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+              <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-12 bg-muted animate-pulse rounded-lg" />)}</div>
             ) : topProducts.length === 0 ? (
-              <p className="text-muted-foreground text-sm">এখনো কোনো বিক্রি হয়নি</p>
+              <p className="text-center text-sm text-muted-foreground py-6">এখনো কোনো বিক্রি হয়নি</p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {topProducts.map((product, i) => (
-                  <div key={product.product_name} className="flex items-center gap-3 py-2 border-b last:border-0">
+                  <div key={product.product_name} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/60 transition-colors">
                     <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shrink-0 ${
-                      i === 0 ? 'bg-secondary/20 text-secondary' :
-                      i === 1 ? 'bg-muted text-muted-foreground' :
-                      'bg-muted text-muted-foreground'
+                      i === 0 ? 'bg-secondary/20 text-secondary' : 'bg-muted text-muted-foreground'
                     }`}>
-                      {i + 1}
+                      {i === 0 ? <Crown className="h-3.5 w-3.5" /> : i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{product.product_name}</p>
-                      <p className="text-xs text-muted-foreground">{product.total_qty} বার বিক্রি</p>
+                      <p className="text-[11px] text-muted-foreground">{product.total_qty} বার বিক্রি</p>
                     </div>
                     <span className="text-sm font-bold text-primary shrink-0">৳{product.total_revenue.toLocaleString('bn-BD')}</span>
                   </div>
@@ -346,30 +396,25 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Recent Customers */}
-        <Card className="lg:col-span-1 md:col-span-2 lg:col-span-1">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <UserPlus className="h-4 w-4 text-primary" />
-              নতুন কাস্টমার
-            </CardTitle>
-            <Link to="/admin/customers" className="text-xs text-primary hover:underline flex items-center gap-1">
-              সব দেখুন <ArrowRight className="h-3 w-3" />
-            </Link>
-          </CardHeader>
-          <CardContent>
+        <Card className="md:col-span-2 lg:col-span-1">
+          <SectionHeader title="নতুন কাস্টমার" linkTo="/admin/customers" linkLabel="সব দেখুন" />
+          <CardContent className="pt-0">
             {loading ? (
-              <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+              <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-12 bg-muted animate-pulse rounded-lg" />)}</div>
             ) : recentCustomers.length === 0 ? (
-              <p className="text-muted-foreground text-sm">কোনো কাস্টমার নেই</p>
+              <p className="text-center text-sm text-muted-foreground py-6">কোনো কাস্টমার নেই</p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {recentCustomers.map((cust) => (
-                  <div key={cust.user_id} className="flex items-center justify-between gap-2 py-2 border-b last:border-0">
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm truncate">{cust.full_name || 'নাম দেওয়া হয়নি'}</p>
-                      <p className="text-xs text-muted-foreground truncate">{cust.phone || '—'}</p>
+                  <div key={cust.user_id} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/60 transition-colors">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
+                      <UserPlus className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-xs text-muted-foreground shrink-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-sm truncate">{cust.full_name || 'নাম দেওয়া হয়নি'}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{cust.phone || '—'}</p>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground shrink-0 bg-muted px-2 py-0.5 rounded-full">
                       {new Date(cust.created_at).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' })}
                     </span>
                   </div>
