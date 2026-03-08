@@ -61,8 +61,15 @@ const Categories = () => {
 
   if (loading) {
     return (
-      <div className="container py-20 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+      <div className="container py-10 pb-24 md:pb-10">
+        <PageHead title="চালের ধরণ" />
+        <h1 className="text-3xl font-bold mb-2">চালের ধরণ</h1>
+        <p className="text-muted-foreground mb-6">আমাদের সকল ধরনের চাল দেখুন এবং অর্ডার করুন</p>
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          {[...Array(6)].map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
