@@ -5,6 +5,7 @@ import { useCartStore } from '@/lib/cartStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
+import SearchDialog from '@/components/SearchDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
