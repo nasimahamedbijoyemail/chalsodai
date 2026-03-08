@@ -186,31 +186,97 @@ const Checkout = () => {
   if (submitted) {
     return (
       <PageTransition>
-        <div className="container py-20 text-center pb-24 md:pb-20">
+        <div className="container py-16 text-center pb-24 md:pb-20 max-w-lg mx-auto relative overflow-hidden">
           <PageHead title="অর্ডার সফল" />
+
+          {/* Confetti particles */}
+          {Array.from({ length: 24 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2.5 h-2.5 rounded-full pointer-events-none"
+              style={{
+                background: ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'][i % 7],
+                left: `${10 + Math.random() * 80}%`,
+                top: '-5%',
+              }}
+              initial={{ y: 0, opacity: 1, scale: 0, rotate: 0 }}
+              animate={{
+                y: [0, 300 + Math.random() * 400],
+                opacity: [1, 1, 0],
+                scale: [0, 1.2, 0.8],
+                rotate: [0, 360 + Math.random() * 720],
+                x: [0, (Math.random() - 0.5) * 200],
+              }}
+              transition={{
+                duration: 2 + Math.random() * 1.5,
+                delay: Math.random() * 0.8,
+                ease: 'easeOut',
+              }}
+            />
+          ))}
+
+          {/* Animated rings behind icon */}
+          <div className="relative mx-auto mb-6 w-24 h-24">
+            <motion.div
+              className="absolute inset-0 rounded-full border-2 border-primary/20"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: [0.5, 1.8], opacity: [0.6, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+            />
+            <motion.div
+              className="absolute inset-0 rounded-full border-2 border-primary/15"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: [0.5, 2.2], opacity: [0.4, 0] }}
+              transition={{ duration: 1.5, delay: 0.3, repeat: Infinity, repeatDelay: 1 }}
+            />
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
+            >
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <CheckCircle className="h-12 w-12 text-primary" />
+              </div>
+            </motion.div>
+          </div>
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, type: 'spring', stiffness: 150 }}
           >
-            <CheckCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <h1 className="text-2xl font-bold mb-2">অর্ডার সফল হয়েছে!</h1>
-            <p className="text-muted-foreground mb-6">
-              আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে। {paymentMethod === 'bkash' ? 'অ্যাডমিন পেমেন্ট ভেরিফাই করার পর' : 'ডেলিভারির সময়'} আপনার অর্ডার প্রসেস করা হবে।
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">অর্ডার সফল হয়েছে! 🎉</h1>
+            <p className="text-muted-foreground mb-6 text-sm sm:text-base leading-relaxed">
+              আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে।{' '}
+              {paymentMethod === 'bkash' ? 'অ্যাডমিন পেমেন্ট ভেরিফাই করার পর' : 'ডেলিভারির সময়'}{' '}
+              আপনার অর্ডার প্রসেস করা হবে।
             </p>
+          </motion.div>
+
+          {user && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="rounded-xl border border-primary/15 bg-gradient-to-r from-primary/5 to-secondary/5 p-4 mb-6 text-sm text-muted-foreground"
+            >
+              🔔 আপনার অর্ডারের আপডেট নোটিফিকেশনে দেখতে পাবেন।
+            </motion.div>
+          )}
+
+          <motion.div
+            className="flex gap-3 justify-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <Button onClick={() => navigate('/')} size="lg">হোমে ফিরুন</Button>
             {user && (
-              <p className="text-sm text-muted-foreground mb-6">
-                আপনার অর্ডারের আপডেট নোটিফিকেশনে দেখতে পাবেন।
-              </p>
+              <Button variant="outline" size="lg" onClick={() => navigate('/my-orders')}>
+                আমার অর্ডার দেখুন
+              </Button>
             )}
-            <div className="flex gap-3 justify-center">
-              <Button onClick={() => navigate('/')}>হোমে ফিরুন</Button>
-              {user && (
-                <Button variant="outline" onClick={() => navigate('/my-orders')}>
-                  আমার অর্ডার দেখুন
-                </Button>
-              )}
-            </div>
           </motion.div>
         </div>
       </PageTransition>
