@@ -88,7 +88,7 @@ const Contact = () => {
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
-              className="flex items-center gap-4 rounded-xl border bg-card p-4 sm:p-5 premium-card block"
+              className="flex items-center gap-4 rounded-xl border bg-card p-4 sm:p-5 premium-card"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08, duration: 0.3 }}

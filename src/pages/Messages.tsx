@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import { Loader2, Send, Plus, ArrowLeft, MessageCircle } from 'lucide-react';
 import PageHead from '@/components/PageHead';
+import PageTransition from '@/components/PageTransition';
 
 interface Conversation {
   id: string;
@@ -228,76 +229,78 @@ const Messages = () => {
   }
 
   return (
-    <div className="container py-10 pb-24 md:pb-10 max-w-2xl">
-      <PageHead title="মেসেজ" />
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">মেসেজ</h1>
-        <Button onClick={() => setShowNew(true)} size="sm">
-          <Plus className="h-4 w-4 mr-2" /> নতুন কথোপকথন
-        </Button>
-      </div>
-
-      {showNew && (
-        <div className="rounded-xl border bg-card p-5 mb-6 space-y-4">
-          <h3 className="font-bold">নতুন কথোপকথন শুরু করুন</h3>
-          <div className="space-y-2">
-            <Label>বিষয়ের ধরণ</Label>
-            <Select value={newType} onValueChange={setNewType}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="general">সাধারণ জিজ্ঞাসা</SelectItem>
-                <SelectItem value="order">অর্ডার সংক্রান্ত</SelectItem>
-                <SelectItem value="product">পণ্য সংক্রান্ত</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>বিষয়</Label>
-            <Input value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="আপনার প্রশ্ন বা সমস্যার বিষয়" />
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={createConversation} disabled={!newSubject.trim()}>শুরু করুন</Button>
-            <Button variant="outline" onClick={() => setShowNew(false)}>বাতিল</Button>
-          </div>
+    <PageTransition>
+      <div className="container py-10 pb-24 md:pb-10 max-w-2xl">
+        <PageHead title="মেসেজ" />
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">মেসেজ</h1>
+          <Button onClick={() => setShowNew(true)} size="sm">
+            <Plus className="h-4 w-4 mr-2" /> নতুন কথোপকথন
+          </Button>
         </div>
-      )}
 
-      {conversations.length === 0 ? (
-        <div className="text-center py-16">
-          <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">কোনো কথোপকথন নেই</p>
-          <p className="text-sm text-muted-foreground">কাস্টমার কেয়ারে মেসেজ পাঠাতে "নতুন কথোপকথন" বাটনে ক্লিক করুন</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {conversations.map((conv) => (
-            <button
-              key={conv.id}
-              onClick={() => openConversation(conv)}
-              className="w-full text-left rounded-xl border bg-card p-4 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold">{conv.subject}</h3>
-                <div className="flex items-center gap-2">
-                  {unreadCounts[conv.id] && (
-                    <Badge variant="destructive" className="text-xs">
-                      {unreadCounts[conv.id]} নতুন
-                    </Badge>
-                  )}
-                  {conv.is_closed && <Badge variant="secondary">বন্ধ</Badge>}
+        {showNew && (
+          <div className="rounded-xl border bg-card p-5 mb-6 space-y-4">
+            <h3 className="font-bold">নতুন কথোপকথন শুরু করুন</h3>
+            <div className="space-y-2">
+              <Label>বিষয়ের ধরণ</Label>
+              <Select value={newType} onValueChange={setNewType}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="general">সাধারণ জিজ্ঞাসা</SelectItem>
+                  <SelectItem value="order">অর্ডার সংক্রান্ত</SelectItem>
+                  <SelectItem value="product">পণ্য সংক্রান্ত</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>বিষয়</Label>
+              <Input value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="আপনার প্রশ্ন বা সমস্যার বিষয়" />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={createConversation} disabled={!newSubject.trim()}>শুরু করুন</Button>
+              <Button variant="outline" onClick={() => setShowNew(false)}>বাতিল</Button>
+            </div>
+          </div>
+        )}
+
+        {conversations.length === 0 ? (
+          <div className="text-center py-16">
+            <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">কোনো কথোপকথন নেই</p>
+            <p className="text-sm text-muted-foreground">কাস্টমার কেয়ারে মেসেজ পাঠাতে &quot;নতুন কথোপকথন&quot; বাটনে ক্লিক করুন</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {conversations.map((conv) => (
+              <button
+                key={conv.id}
+                onClick={() => openConversation(conv)}
+                className="w-full text-left rounded-xl border bg-card p-4 hover:shadow-md transition-shadow premium-card"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm sm:text-base">{conv.subject}</h3>
+                  <div className="flex items-center gap-2">
+                    {unreadCounts[conv.id] && (
+                      <Badge variant="destructive" className="text-xs">
+                        {unreadCounts[conv.id]} নতুন
+                      </Badge>
+                    )}
+                    {conv.is_closed && <Badge variant="secondary">বন্ধ</Badge>}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className="text-xs">{typeLabels[conv.subject_type] || 'সাধারণ'}</Badge>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(conv.updated_at).toLocaleDateString('bn-BD')}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="text-xs">{typeLabels[conv.subject_type] || 'সাধারণ'}</Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(conv.updated_at).toLocaleDateString('bn-BD')}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </PageTransition>
   );
 };
 
