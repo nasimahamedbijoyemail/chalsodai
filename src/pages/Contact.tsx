@@ -4,6 +4,7 @@ import { Phone, MessageCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import PageHead from '@/components/PageHead';
 
 const Contact = () => {
   const { user } = useAuth();
