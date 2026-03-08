@@ -14,7 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2, KeyRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PageHead from '@/components/PageHead';
 
@@ -30,6 +30,10 @@ const Profile = () => {
   const [deleteReason, setDeleteReason] = useState('');
   const [deletionRequested, setDeletionRequested] = useState(false);
   const [requesting, setRequesting] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -150,8 +154,72 @@ const Profile = () => {
         লগআউট
       </Button>
 
-      {/* Account Deletion Section */}
+      {/* Password Change Section */}
       <div className="mt-10 pt-8 border-t">
+        <h2 className="text-lg font-bold mb-3">পাসওয়ার্ড পরিবর্তন</h2>
+        <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <KeyRound className="h-4 w-4" />
+              পাসওয়ার্ড পরিবর্তন করুন
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>নতুন পাসওয়ার্ড সেট করুন</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>নতুন পাসওয়ার্ড</Label>
+                <Input
+                  type="password"
+                  placeholder="ন্যূনতম ৬ অক্ষর"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  minLength={6}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>পাসওয়ার্ড নিশ্চিত করুন</Label>
+                <Input
+                  type="password"
+                  placeholder="আবার পাসওয়ার্ড দিন"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  minLength={6}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { setPasswordDialogOpen(false); setNewPassword(''); setConfirmPassword(''); }}>বাতিল</Button>
+              <Button
+                onClick={async () => {
+                  if (newPassword.length < 6) { toast.error('পাসওয়ার্ড ন্যূনতম ৬ অক্ষর হতে হবে'); return; }
+                  if (newPassword !== confirmPassword) { toast.error('পাসওয়ার্ড মিলছে না'); return; }
+                  setChangingPassword(true);
+                  const { error } = await supabase.auth.updateUser({ password: newPassword });
+                  if (error) {
+                    toast.error('পাসওয়ার্ড পরিবর্তন করতে সমস্যা হয়েছে');
+                  } else {
+                    toast.success('পাসওয়ার্ড পরিবর্তন হয়েছে!');
+                    setPasswordDialogOpen(false);
+                    setNewPassword('');
+                    setConfirmPassword('');
+                  }
+                  setChangingPassword(false);
+                }}
+                disabled={changingPassword}
+              >
+                {changingPassword ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                পরিবর্তন করুন
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Account Deletion Section */}
+      <div className="mt-8 pt-8 border-t">
         <h2 className="text-lg font-bold text-destructive mb-2">সেটিংস</h2>
         {deletionRequested ? (
           <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
