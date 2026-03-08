@@ -99,6 +99,7 @@ const App = () => (
                 </Routes>
               </main>
               <Footer />
+              <BottomNav />
             </div>
           </AuthProvider>
         </BrowserRouter>
