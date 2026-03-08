@@ -215,41 +215,33 @@ const Profile = () => {
         {/* Account Deletion */}
         <div className="mt-6 pt-6 border-t">
           <h2 className="text-base sm:text-lg font-bold text-destructive mb-3">বিপদ জোন</h2>
-          {deletionRequested ? (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" size="sm" className="gap-2">
+                <Trash2 className="h-4 w-4" />
+                অ্যাকাউন্ট ডিলিট করুন
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>অ্যাকাউন্ট ডিলিট করুন</DialogTitle>
+              </DialogHeader>
               <p className="text-sm text-muted-foreground">
-                আপনার অ্যাকাউন্ট ডিলিট রিকোয়েস্ট পাঠানো হয়েছে। অ্যাডমিন শীঘ্রই ব্যবস্থা নেবেন।
+                ⚠️ এই কাজটি অপরিবর্তনীয়! আপনার অ্যাকাউন্ট, প্রোফাইল, এবং সকল ডেটা স্থায়ীভাবে মুছে ফেলা হবে। আপনার অর্ডার ইতিহাস রেকর্ড হিসেবে থাকবে।
               </p>
-            </div>
-          ) : (
-            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="destructive" size="sm" className="gap-2">
-                  <Trash2 className="h-4 w-4" />
-                  অ্যাকাউন্ট ডিলিট করুন
+              <div className="space-y-2">
+                <Label>কারণ (ঐচ্ছিক)</Label>
+                <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} placeholder="কেন ডিলিট করতে চান..." rows={3} maxLength={500} />
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>বাতিল</Button>
+                <Button variant="destructive" onClick={handleDeleteAccount} disabled={requesting}>
+                  {requesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  স্থায়ীভাবে ডিলিট করুন
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>অ্যাকাউন্ট ডিলিট রিকোয়েস্ট</DialogTitle>
-                </DialogHeader>
-                <p className="text-sm text-muted-foreground">
-                  আপনার অ্যাকাউন্ট ডিলিট করার রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হবে।
-                </p>
-                <div className="space-y-2">
-                  <Label>কারণ (ঐচ্ছিক)</Label>
-                  <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} placeholder="কেন ডিলিট করতে চান..." rows={3} maxLength={500} />
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>বাতিল</Button>
-                  <Button variant="destructive" onClick={handleDeleteRequest} disabled={requesting}>
-                    {requesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    রিকোয়েস্ট পাঠান
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </PageTransition>
