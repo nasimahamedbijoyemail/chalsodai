@@ -33,6 +33,10 @@ const Checkout = () => {
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
+    // Fetch WhatsApp number from settings
+    supabase.from('site_settings').select('value').eq('key', 'whatsapp_number').maybeSingle()
+      .then(({ data }) => { if (data?.value) setWhatsappNumber(data.value.replace(/[^0-9]/g, '')); });
+
     if (user) {
       const fetchProfile = async () => {
         const { data } = await supabase
