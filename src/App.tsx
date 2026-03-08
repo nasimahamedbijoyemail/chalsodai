@@ -92,6 +92,7 @@ const App = () => (
                     <Route path="deletion-requests" element={<AdminDeletionRequests />} />
                     <Route path="settings" element={<AdminSettings />} />
                     <Route path="password-resets" element={<AdminPasswordResets />} />
+                    <Route path="promotions" element={<AdminPromotions />} />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>
