@@ -21,6 +21,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore((s) => s.addItem);
+  const setBuyNowItem = useCartStore((s) => s.setBuyNowItem);
   const navigate = useNavigate();
 
   const handleAddToCart = () => {
