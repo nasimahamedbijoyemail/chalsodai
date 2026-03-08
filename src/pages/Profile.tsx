@@ -29,7 +29,7 @@ const Profile = () => {
   const [address, setAddress] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState('');
-  const [deletionRequested, setDeletionRequested] = useState(false);
+  
   const [requesting, setRequesting] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
