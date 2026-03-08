@@ -129,7 +129,7 @@ const ProductDetail = () => {
           {product.description && (
             <div>
               <h3 className="font-semibold mb-2">বিবরণ</h3>
-              <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
             </div>
           )}
 
