@@ -8,6 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import BottomNav from "./components/BottomNav";
 import Index from "./pages/Index";
 import Categories from "./pages/Categories";
 import Cart from "./pages/Cart";
@@ -98,6 +99,7 @@ const App = () => (
                 </Routes>
               </main>
               <Footer />
+              <BottomNav />
             </div>
           </AuthProvider>
         </BrowserRouter>

@@ -87,7 +87,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="container py-10">
+    <div className="container py-10 pb-24 md:pb-10">
       <PageHead title={product.name} description={product.description || `${product.name} — চাল সদাই`} />
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" /> পেছনে যান
@@ -95,8 +95,8 @@ const ProductDetail = () => {
 
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-3">
-          <div className="aspect-square overflow-hidden rounded-2xl bg-muted">
-            <img src={selectedImage} alt={product.name} className="h-full w-full object-cover" />
+          <div className="aspect-square overflow-hidden rounded-2xl bg-muted group cursor-zoom-in">
+            <img src={selectedImage} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-125" />
           </div>
           {allImages.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-1">

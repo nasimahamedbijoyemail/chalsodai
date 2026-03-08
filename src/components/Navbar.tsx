@@ -5,6 +5,7 @@ import { useCartStore } from '@/lib/cartStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
+import SearchDialog from '@/components/SearchDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,7 +50,8 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <SearchDialog />
           {user && <NotificationBell />}
           
           <Link to="/cart" className="relative">
