@@ -7,10 +7,13 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-ro
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { AnimatePresence } from "framer-motion";
+import { Suspense, lazy } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import BottomNav from "./components/BottomNav";
+import ErrorBoundary from "./components/ErrorBoundary";
+import PageSkeleton from "./components/PageSkeleton";
 import Index from "./pages/Index";
 import Categories from "./pages/Categories";
 import Cart from "./pages/Cart";
@@ -20,25 +23,34 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import MyOrders from "./pages/MyOrders";
 import OrderDetail from "./pages/OrderDetail";
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminCustomers from "./pages/admin/AdminCustomers";
-import AdminFAQs from "./pages/admin/AdminFAQs";
-import AdminNotifications from "./pages/admin/AdminNotifications";
-import AdminDeletionRequests from "./pages/admin/AdminDeletionRequests";
 import ProductDetail from "./pages/ProductDetail";
 import Contact from "./pages/Contact";
 import Messages from "./pages/Messages";
-import AdminMessages from "./pages/admin/AdminMessages";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminPasswordResets from "./pages/admin/AdminPasswordResets";
-import AdminPromotions from "./pages/admin/AdminPromotions";
 import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// Lazy load admin routes
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
+const AdminFAQs = lazy(() => import("./pages/admin/AdminFAQs"));
+const AdminNotifications = lazy(() => import("./pages/admin/AdminNotifications"));
+const AdminDeletionRequests = lazy(() => import("./pages/admin/AdminDeletionRequests"));
+const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminPasswordResets = lazy(() => import("./pages/admin/AdminPasswordResets"));
+const AdminPromotions = lazy(() => import("./pages/admin/AdminPromotions"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 2, // 2 min cache
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const BackButtonHandler = () => {
   const navigate = useNavigate();
@@ -76,18 +88,22 @@ const AnimatedRoutes = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/order/:id" element={<OrderDetail />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="customers" element={<AdminCustomers />} />
-          <Route path="faqs" element={<AdminFAQs />} />
-          <Route path="notifications" element={<AdminNotifications />} />
-          <Route path="messages" element={<AdminMessages />} />
-          <Route path="deletion-requests" element={<AdminDeletionRequests />} />
-          <Route path="settings" element={<AdminSettings />} />
-          <Route path="password-resets" element={<AdminPasswordResets />} />
-          <Route path="promotions" element={<AdminPromotions />} />
+        <Route path="/admin" element={
+          <Suspense fallback={<PageSkeleton />}>
+            <AdminLayout />
+          </Suspense>
+        }>
+          <Route index element={<Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense>} />
+          <Route path="orders" element={<Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense>} />
+          <Route path="products" element={<Suspense fallback={<PageSkeleton />}><AdminProducts /></Suspense>} />
+          <Route path="customers" element={<Suspense fallback={<PageSkeleton />}><AdminCustomers /></Suspense>} />
+          <Route path="faqs" element={<Suspense fallback={<PageSkeleton />}><AdminFAQs /></Suspense>} />
+          <Route path="notifications" element={<Suspense fallback={<PageSkeleton />}><AdminNotifications /></Suspense>} />
+          <Route path="messages" element={<Suspense fallback={<PageSkeleton />}><AdminMessages /></Suspense>} />
+          <Route path="deletion-requests" element={<Suspense fallback={<PageSkeleton />}><AdminDeletionRequests /></Suspense>} />
+          <Route path="settings" element={<Suspense fallback={<PageSkeleton />}><AdminSettings /></Suspense>} />
+          <Route path="password-resets" element={<Suspense fallback={<PageSkeleton />}><AdminPasswordResets /></Suspense>} />
+          <Route path="promotions" element={<Suspense fallback={<PageSkeleton />}><AdminPromotions /></Suspense>} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -104,15 +120,17 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
-              <BackButtonHandler />
-              <div className="flex min-h-screen flex-col">
-                <Navbar />
-                <main className="flex-1">
-                  <AnimatedRoutes />
-                </main>
-                <Footer />
-                <BottomNav />
-              </div>
+              <ErrorBoundary>
+                <BackButtonHandler />
+                <div className="flex min-h-screen flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <AnimatedRoutes />
+                  </main>
+                  <Footer />
+                  <BottomNav />
+                </div>
+              </ErrorBoundary>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
