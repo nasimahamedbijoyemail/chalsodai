@@ -86,11 +86,11 @@ const Profile = () => {
       });
       if (reqError) throw reqError;
 
-      // Notify admin
+      // Notify admin via broadcast
       await supabase.from('notifications').insert({
         title: 'অ্যাকাউন্ট ডিলিট রিকোয়েস্ট',
         message: `${fullName || 'একজন কাস্টমার'} তাদের অ্যাকাউন্ট ডিলিট করতে চান। কারণ: ${deleteReason || 'উল্লেখ করা হয়নি'}`,
-        is_broadcast: false,
+        is_broadcast: true,
         user_id: null,
       });
 
