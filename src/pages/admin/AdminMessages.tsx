@@ -68,18 +68,20 @@ const AdminMessages = () => {
       .order('updated_at', { ascending: false });
     setConversations(data || []);
 
-    // Get unread counts
+    // Get unread counts in a single query
     if (data && data.length > 0) {
+      const convIds = data.map(c => c.id);
+      const { data: unreadMessages } = await supabase
+        .from('chat_messages')
+        .select('conversation_id')
+        .in('conversation_id', convIds)
+        .eq('is_admin', false)
+        .eq('is_read', false);
+      
       const counts: Record<string, number> = {};
-      for (const conv of data) {
-        const { count } = await supabase
-          .from('chat_messages')
-          .select('id', { count: 'exact', head: true })
-          .eq('conversation_id', conv.id)
-          .eq('is_admin', false)
-          .eq('is_read', false);
-        if (count && count > 0) counts[conv.id] = count;
-      }
+      unreadMessages?.forEach(msg => {
+        counts[msg.conversation_id] = (counts[msg.conversation_id] || 0) + 1;
+      });
       setUnreadCounts(counts);
     }
     setLoading(false);

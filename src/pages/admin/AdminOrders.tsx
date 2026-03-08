@@ -142,10 +142,13 @@ const AdminOrders = () => {
   };
 
   const filteredOrders = orders.filter(
-    (o) =>
-      o.order_number.toLowerCase().includes(search.toLowerCase()) ||
-      o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-      o.customer_phone.includes(search)
+    (o) => {
+      const matchesSearch = o.order_number.toLowerCase().includes(search.toLowerCase()) ||
+        o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
+        o.customer_phone.includes(search);
+      const matchesFilter = activeFilter === 'all' || o.status === activeFilter;
+      return matchesSearch && matchesFilter;
+    }
   );
 
   if (loading) {

@@ -11,11 +11,10 @@ interface DeletionRequest {
   reason: string | null;
   status: string;
   created_at: string;
-  profile?: { full_name: string | null; phone: string | null } | null;
 }
 
 const AdminDeletionRequests = () => {
-  const [requests, setRequests] = useState<DeletionRequest[]>([]);
+  const [requests, setRequests] = useState<(DeletionRequest & { profile_name: string | null; profile_phone: string | null })[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRequests = async () => {
@@ -24,19 +23,23 @@ const AdminDeletionRequests = () => {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (data) {
-      // Fetch profile info for each request
-      const enriched = await Promise.all(
-        data.map(async (req) => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name, phone')
-            .eq('user_id', req.user_id)
-            .maybeSingle();
-          return { ...req, profile };
-        })
-      );
-      setRequests(enriched);
+    if (data && data.length > 0) {
+      // Batch fetch all profiles in one query
+      const userIds = [...new Set(data.map(r => r.user_id))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, phone')
+        .in('user_id', userIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+      
+      setRequests(data.map(req => ({
+        ...req,
+        profile_name: profileMap.get(req.user_id)?.full_name || null,
+        profile_phone: profileMap.get(req.user_id)?.phone || null,
+      })));
+    } else {
+      setRequests([]);
     }
     setLoading(false);
   };
@@ -90,8 +93,8 @@ const AdminDeletionRequests = () => {
             <div key={req.id} className="rounded-xl border bg-card p-4">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="font-bold">{req.profile?.full_name || 'নাম নেই'}</p>
-                  <p className="text-sm text-muted-foreground">{req.profile?.phone || ''}</p>
+                  <p className="font-bold">{req.profile_name || 'নাম নেই'}</p>
+                  <p className="text-sm text-muted-foreground">{req.profile_phone || ''}</p>
                   {req.reason && (
                     <p className="text-sm text-muted-foreground mt-1">কারণ: {req.reason}</p>
                   )}
