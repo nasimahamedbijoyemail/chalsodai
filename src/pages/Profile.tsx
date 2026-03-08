@@ -14,7 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2, KeyRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PageHead from '@/components/PageHead';
 
@@ -30,6 +30,10 @@ const Profile = () => {
   const [deleteReason, setDeleteReason] = useState('');
   const [deletionRequested, setDeletionRequested] = useState(false);
   const [requesting, setRequesting] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
