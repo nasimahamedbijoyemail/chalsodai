@@ -81,25 +81,31 @@ const Profile = () => {
     }
   };
 
-  const handleDeleteRequest = async () => {
+  const handleDeleteAccount = async () => {
     if (!user) return;
     setRequesting(true);
     try {
-      const { error: reqError } = await supabase.from('account_deletion_requests').insert({
-        user_id: user.id,
-        reason: deleteReason || null,
-      });
-      if (reqError) throw reqError;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
 
-      // Notification is now handled by admin-only broadcast policy
-      // The admin will see the deletion request in the admin panel
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/self-delete-account`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+        }
+      );
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to delete');
 
-      toast.success('অ্যাকাউন্ট ডিলিট রিকোয়েস্ট পাঠানো হয়েছে।');
-      setDeletionRequested(true);
-      setDeleteDialogOpen(false);
-      setDeleteReason('');
+      toast.success('আপনার অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে।');
+      await signOut();
+      navigate('/');
     } catch {
-      toast.error('রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে');
+      toast.error('অ্যাকাউন্ট মুছতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     } finally {
       setRequesting(false);
     }
