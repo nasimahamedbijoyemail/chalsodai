@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Bell, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,8 +23,10 @@ const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [open, setOpen] = useState(false);
+  const fetchedRef = useRef(false);
+  const userIdRef = useRef<string | null>(null);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!user) return;
 
     const { data } = await supabase
@@ -54,32 +56,38 @@ const NotificationBell = () => {
         .eq('is_read', false);
       setUnreadMessages(count || 0);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
+    if (!user) {
+      fetchedRef.current = false;
+      userIdRef.current = null;
+      return;
+    }
+
+    // Only fetch once per user session
+    if (userIdRef.current === user.id && fetchedRef.current) return;
+    userIdRef.current = user.id;
+    fetchedRef.current = true;
+
     fetchNotifications();
 
-    if (!user) return;
     const channel = supabase
       .channel('user-notifications')
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'notifications',
-      }, () => {
-        fetchNotifications();
-      })
+      }, () => fetchNotifications())
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'chat_messages',
-      }, () => {
-        fetchNotifications();
-      })
+      }, () => fetchNotifications())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [user, fetchNotifications]);
 
   const markAsRead = async (id: string) => {
     await supabase.from('notifications').update({ is_read: true }).eq('id', id);
@@ -108,7 +116,7 @@ const NotificationBell = () => {
         >
           <Bell className="h-5 w-5" />
           {totalUnread > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground">
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground animate-pulse">
               {totalUnread}
             </span>
           )}
@@ -133,7 +141,7 @@ const NotificationBell = () => {
             <p className="p-4 text-center text-sm text-muted-foreground">কোনো নোটিফিকেশন নেই</p>
           ) : (
             notifications.map((n) => (
-              <div key={n.id} className={`border-b p-3 ${!n.is_read ? 'bg-muted/50' : ''}`}>
+              <div key={n.id} className={`border-b p-3 transition-colors ${!n.is_read ? 'bg-muted/50' : ''}`}>
                 <div className="flex justify-between items-start gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm">{n.title}</p>
