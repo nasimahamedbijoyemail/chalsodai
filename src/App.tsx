@@ -31,6 +31,7 @@ import Messages from "./pages/Messages";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminPasswordResets from "./pages/admin/AdminPasswordResets";
+import AdminPromotions from "./pages/admin/AdminPromotions";
 import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 
