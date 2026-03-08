@@ -27,6 +27,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Contact from "./pages/Contact";
 import Messages from "./pages/Messages";
 import ForgotPassword from "./pages/ForgotPassword";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 // Lazy load admin routes
