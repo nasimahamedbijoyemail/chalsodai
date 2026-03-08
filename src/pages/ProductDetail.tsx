@@ -88,6 +88,7 @@ const ProductDetail = () => {
 
   return (
     <div className="container py-10">
+      <PageHead title={product.name} description={product.description || `${product.name} — চাল সদাই`} />
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" /> পেছনে যান
       </Button>

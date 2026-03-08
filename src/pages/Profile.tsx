@@ -116,6 +116,7 @@ const Profile = () => {
 
   return (
     <div className="container py-10 max-w-lg">
+      <PageHead title="আমার প্রোফাইল" />
       <h1 className="text-3xl font-bold mb-8">আমার প্রোফাইল</h1>
 
       <form onSubmit={handleSave} className="space-y-5">
