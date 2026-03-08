@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Grid3X3, ShoppingCart, User } from 'lucide-react';
+import { Home, Grid3X3, ShoppingCart, User, MessageCircle } from 'lucide-react';
 import { useCartStore } from '@/lib/cartStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
@@ -15,6 +15,7 @@ const BottomNav = () => {
     { to: '/', icon: Home, label: 'হোম' },
     { to: '/categories', icon: Grid3X3, label: 'ক্যাটাগরি' },
     { to: '/cart', icon: ShoppingCart, label: 'কার্ট', badge: totalItems },
+    { to: user ? '/messages' : '/auth', icon: MessageCircle, label: 'মেসেজ' },
     { to: user ? '/profile' : '/auth', icon: User, label: user ? 'প্রোফাইল' : 'লগইন' },
   ];
 
@@ -25,7 +26,7 @@ const BottomNav = () => {
           const isActive = location.pathname === link.to;
           return (
             <Link
-              key={link.to}
+              key={link.to + link.label}
               to={link.to}
               className={`relative flex flex-col items-center justify-center gap-0.5 w-full h-full transition-all duration-200 ${
                 isActive ? 'text-primary' : 'text-muted-foreground active:scale-95'
@@ -47,7 +48,7 @@ const BottomNav = () => {
               {isActive && (
                 <motion.span
                   layoutId="bottomNavIndicator"
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 rounded-full bg-primary"
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
