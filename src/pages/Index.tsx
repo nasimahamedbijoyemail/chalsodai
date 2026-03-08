@@ -22,24 +22,38 @@ interface Category {
   name: string;
 }
 
+interface Promotion {
+  id: string;
+  title: string;
+  image_url: string;
+  link_url: string;
+}
+
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [prodRes, catRes] = await Promise.all([
+      const [prodRes, catRes, promoRes] = await Promise.all([
         supabase
           .from('rice_products')
           .select('id, name, price, pack_size, description, image_url, rice_categories(name)')
           .eq('is_available', true)
           .limit(4),
         supabase.from('rice_categories').select('id, name').order('name'),
+        supabase
+          .from('promotions')
+          .select('id, title, image_url, link_url')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true }),
       ]);
       
       setProducts(prodRes.data || []);
       setCategories(catRes.data || []);
+      setPromotions(promoRes.data || []);
       setLoading(false);
     };
     fetchData();
