@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Phone, MessageCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import PageHead from '@/components/PageHead';
+import PageTransition from '@/components/PageTransition';
 
 const Contact = () => {
   const { user } = useAuth();
@@ -30,85 +32,95 @@ const Contact = () => {
     );
   }
 
+  const contactItems = [
+    settings.contact_phone && {
+      href: `tel:${settings.contact_phone}`,
+      icon: <Phone className="h-6 w-6 text-primary" />,
+      title: 'ফোন',
+      desc: settings.contact_phone,
+      bg: 'bg-primary/10',
+    },
+    settings.whatsapp_number && {
+      href: `https://wa.me/${settings.whatsapp_number.replace(/[^0-9]/g, '')}`,
+      icon: <MessageCircle className="h-6 w-6 text-primary" />,
+      title: 'হোয়াটসঅ্যাপ',
+      desc: settings.whatsapp_number,
+      bg: 'bg-primary/10',
+      external: true,
+    },
+    settings.facebook_url && {
+      href: settings.facebook_url,
+      icon: <svg className="h-6 w-6 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>,
+      title: 'ফেসবুক',
+      desc: 'আমাদের ফেসবুক পেজ',
+      bg: 'bg-accent/10',
+      external: true,
+    },
+    settings.youtube_url && {
+      href: settings.youtube_url,
+      icon: <svg className="h-6 w-6 text-destructive" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>,
+      title: 'ইউটিউব',
+      desc: 'আমাদের ইউটিউব চ্যানেল',
+      bg: 'bg-destructive/10',
+      external: true,
+    },
+    settings.instagram_url && {
+      href: settings.instagram_url,
+      icon: <svg className="h-6 w-6 text-secondary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" /></svg>,
+      title: 'ইনস্টাগ্রাম',
+      desc: 'আমাদের ইনস্টাগ্রাম',
+      bg: 'bg-secondary/10',
+      external: true,
+    },
+  ].filter(Boolean) as Array<{ href: string; icon: React.ReactNode; title: string; desc: string; bg: string; external?: boolean }>;
+
   return (
-    <div className="container py-10 pb-24 md:pb-10 max-w-2xl">
-      <PageHead title="যোগাযোগ" description="চাল সদাইতে যোগাযোগ করুন — ফোন, হোয়াটসঅ্যাপ, ফেসবুক।" canonicalPath="/contact" />
-      <h1 className="text-3xl font-bold mb-2">যোগাযোগ</h1>
-      <p className="text-muted-foreground mb-8">আমাদের সাথে যোগাযোগ করুন</p>
+    <PageTransition>
+      <div className="container py-8 sm:py-10 pb-24 md:pb-10 max-w-2xl">
+        <PageHead title="যোগাযোগ" description="চাল সদাইতে যোগাযোগ করুন — ফোন, হোয়াটসঅ্যাপ, ফেসবুক।" canonicalPath="/contact" />
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">যোগাযোগ</h1>
+        <p className="text-muted-foreground mb-6 sm:mb-8">আমাদের সাথে যোগাযোগ করুন</p>
 
-      <div className="space-y-4">
-        {settings.contact_phone && (
-          <a href={`tel:${settings.contact_phone}`} className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-              <Phone className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold">ফোন</h3>
-              <p className="text-sm text-muted-foreground">{settings.contact_phone}</p>
-            </div>
-          </a>
-        )}
+        <div className="space-y-3">
+          {contactItems.map((item, i) => (
+            <motion.a
+              key={item.title}
+              href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener noreferrer' : undefined}
+              className="flex items-center gap-4 rounded-xl border bg-card p-4 sm:p-5 premium-card block"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08, duration: 0.3 }}
+            >
+              <div className={`flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg ${item.bg}`}>
+                {item.icon}
+              </div>
+              <div>
+                <h3 className="font-bold text-sm sm:text-base">{item.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">{item.desc}</p>
+              </div>
+            </motion.a>
+          ))}
+        </div>
 
-        {settings.whatsapp_number && (
-          <a href={`https://wa.me/${settings.whatsapp_number.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-              <MessageCircle className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold">হোয়াটসঅ্যাপ</h3>
-              <p className="text-sm text-muted-foreground">{settings.whatsapp_number}</p>
-            </div>
-          </a>
-        )}
-
-        {settings.facebook_url && (
-          <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-              <svg className="h-6 w-6 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-            </div>
-            <div>
-              <h3 className="font-bold">ফেসবুক</h3>
-              <p className="text-sm text-muted-foreground">আমাদের ফেসবুক পেজ</p>
-            </div>
-          </a>
-        )}
-
-        {settings.youtube_url && (
-          <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
-              <svg className="h-6 w-6 text-destructive" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
-            </div>
-            <div>
-              <h3 className="font-bold">ইউটিউব</h3>
-              <p className="text-sm text-muted-foreground">আমাদের ইউটিউব চ্যানেল</p>
-            </div>
-          </a>
-        )}
-
-        {settings.instagram_url && (
-          <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-secondary/10">
-              <svg className="h-6 w-6 text-secondary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" /></svg>
-            </div>
-            <div>
-              <h3 className="font-bold">ইনস্টাগ্রাম</h3>
-              <p className="text-sm text-muted-foreground">আমাদের ইনস্টাগ্রাম</p>
-            </div>
-          </a>
+        {user && (
+          <motion.div
+            className="mt-8 sm:mt-10 rounded-xl border bg-card p-5 sm:p-6 text-center premium-card"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <MessageCircle className="h-10 w-10 text-primary mx-auto mb-3" />
+            <h3 className="font-bold text-lg mb-2">সরাসরি মেসেজ করুন</h3>
+            <p className="text-sm text-muted-foreground mb-4">কাস্টমার কেয়ারে সরাসরি মেসেজ পাঠান</p>
+            <Button asChild>
+              <Link to="/messages">মেসেজ পাঠান</Link>
+            </Button>
+          </motion.div>
         )}
       </div>
-
-      {user && (
-        <div className="mt-10 rounded-xl border bg-card p-6 text-center">
-          <MessageCircle className="h-10 w-10 text-primary mx-auto mb-3" />
-          <h3 className="font-bold text-lg mb-2">সরাসরি মেসেজ করুন</h3>
-          <p className="text-sm text-muted-foreground mb-4">কাস্টমার কেয়ারে সরাসরি মেসেজ পাঠান</p>
-          <Button asChild>
-            <Link to="/messages">মেসেজ পাঠান</Link>
-          </Button>
-        </div>
-      )}
-    </div>
+    </PageTransition>
   );
 };
 
