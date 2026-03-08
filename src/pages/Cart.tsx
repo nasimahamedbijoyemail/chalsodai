@@ -26,7 +26,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="container py-10">
+    <div className="container py-10 pb-24 md:pb-10">
       <PageHead title="কার্ট" />
       <h1 className="text-3xl font-bold mb-8">আপনার কার্ট</h1>
 
