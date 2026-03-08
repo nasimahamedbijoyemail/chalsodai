@@ -140,6 +140,26 @@ const AdminDashboard = () => {
     return Array.from(map.values());
   }, [allOrders]);
 
+  const statusDistribution = useMemo(() => {
+    const countMap = new Map<string, number>();
+    allOrders.forEach((o) => {
+      countMap.set(o.status, (countMap.get(o.status) || 0) + 1);
+    });
+    return Array.from(countMap.entries()).map(([status, count]) => ({
+      name: statusLabels[status] || status,
+      value: count,
+    }));
+  }, [allOrders]);
+
+  const PIE_COLORS = [
+    'hsl(38, 60%, 55%)',   // secondary/gold
+    'hsl(145, 45%, 28%)',  // primary/green
+    'hsl(220, 60%, 55%)',  // blue
+    'hsl(25, 50%, 40%)',   // accent/earth
+    'hsl(0, 84%, 60%)',    // destructive
+    'hsl(270, 50%, 55%)',  // violet
+  ];
+
   const statCards = [
     { title: 'মোট রেভেনিউ', value: `৳${stats.totalRevenue.toLocaleString('bn-BD')}`, icon: TrendingUp, color: 'text-emerald-600' },
     { title: 'পেন্ডিং অর্ডার', value: stats.pendingOrders, icon: Clock, color: 'text-orange-600' },
