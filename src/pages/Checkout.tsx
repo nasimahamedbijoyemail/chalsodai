@@ -27,6 +27,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
 
   const subtotal = totalPrice();
   const grandTotal = subtotal + DELIVERY_CHARGE;
