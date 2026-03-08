@@ -218,6 +218,49 @@ const Index = () => {
           )}
         </section>
 
+        {/* Testimonials */}
+        <section className="bg-section-warm py-16">
+          <div className="container">
+            <motion.div
+              className="text-center mb-10"
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-2xl md:text-3xl font-bold mb-2">আমাদের কাস্টমাররা যা বলেন</h2>
+              <p className="text-muted-foreground text-sm sm:text-base">হাজারো সন্তুষ্ট কাস্টমারদের মতামত</p>
+            </motion.div>
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { name: 'রাহেলা বেগম', location: 'মিরপুর, ঢাকা', text: 'চাল সদাই থেকে প্রথমবার অর্ডার করেছিলাম। চালের মান অসাধারণ, সময়মতো ডেলিভারি পেয়েছি। খুবই সন্তুষ্ট!', rating: 5 },
+                { name: 'মোঃ করিম উদ্দিন', location: 'উত্তরা, ঢাকা', text: 'বাজারে গিয়ে চাল কেনার ঝামেলা থেকে মুক্তি পেলাম। দাম যুক্তিসংগত এবং চালের গুণগত মান চমৎকার।', rating: 5 },
+                { name: 'ফারজানা আক্তার', location: 'ধানমন্ডি, ঢাকা', text: 'বিকাশে পেমেন্ট করা যায় বলে খুবই সুবিধা। ৩ মাস ধরে নিয়মিত অর্ডার করছি, কখনো হতাশ হইনি।', rating: 5 },
+              ].map((t, i) => (
+                <motion.div
+                  key={t.name}
+                  className="relative rounded-2xl border bg-background p-5 sm:p-6 premium-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.12, duration: 0.4 }}
+                >
+                  <Quote className="absolute top-4 right-4 h-8 w-8 text-primary/10" />
+                  <div className="flex gap-0.5 mb-3">
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />
+                    ))}
+                  </div>
+                  <p className="text-sm sm:text-base text-foreground leading-relaxed mb-4">"{t.text}"</p>
+                  <div>
+                    <p className="font-bold text-sm">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.location}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <motion.section
           className="bg-primary text-primary-foreground py-16"
