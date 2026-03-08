@@ -17,7 +17,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="border-t bg-card mt-16">
+    <footer className="border-t bg-card mt-16 pb-20 md:pb-0">
       <div className="container py-10">
         <div className="grid gap-8 md:grid-cols-3">
           <div>

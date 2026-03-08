@@ -140,6 +140,24 @@ const Checkout = () => {
       if (!user && currentUser) {
         toast.success('আপনার অ্যাকাউন্টও তৈরি হয়েছে!');
       }
+
+      // WhatsApp confirmation
+      const whatsappMsg = encodeURIComponent(
+        `✅ নতুন অর্ডার!\n\n` +
+        `📋 অর্ডার নং: ${order.order_number}\n` +
+        `👤 নাম: ${name}\n` +
+        `📱 ফোন: ${phone}\n` +
+        `📍 ঠিকানা: ${address}\n` +
+        `💰 মোট: ৳${grandTotal}\n` +
+        `💳 পেমেন্ট: ${paymentMethod === 'cod' ? 'ক্যাশ অন ডেলিভারি' : 'বিকাশ'}\n` +
+        (paymentMethod === 'bkash' ? `🔖 ট্রানজেকশন: ${bkashNumber}\n` : '') +
+        `\nপণ্য:\n` +
+        items.map(i => `• ${i.name} × ${i.quantity} = ৳${i.price * i.quantity}`).join('\n')
+      );
+      // Open WhatsApp after a short delay
+      setTimeout(() => {
+        window.open(`https://wa.me/8801341180374?text=${whatsappMsg}`, '_blank');
+      }, 1500);
     } catch (error) {
       console.error('Order error:', error);
       toast.error('অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');

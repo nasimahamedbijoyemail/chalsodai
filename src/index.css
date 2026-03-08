@@ -115,4 +115,8 @@
   .bg-section-warm {
     background: linear-gradient(180deg, hsl(40 30% 97%), hsl(40 25% 93%));
   }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
