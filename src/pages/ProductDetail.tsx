@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
+import PageHead from '@/components/PageHead';
 
 interface Product {
   id: string;
