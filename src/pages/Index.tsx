@@ -87,10 +87,10 @@ const Index = () => {
           <div className="container">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="space-y-2">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-secondary leading-tight">
                   সেরা মানের চাল, সরাসরি আপনার ঘরে
                 </h1>
-                <p className="text-sm md:text-base text-primary-foreground/80">
+                <p className="text-xs sm:text-sm md:text-base text-primary-foreground/80">
                   ঢাকা শহরে দ্রুত ডেলিভারি। বিশ্বস্ত মানের চাল সাশ্রয়ী মূল্যে।
                 </p>
               </div>
