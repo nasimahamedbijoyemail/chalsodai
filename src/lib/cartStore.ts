@@ -29,6 +29,7 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      buyNowItems: [],
       addItem: (item) => {
         set((state) => {
           const existing = state.items.find((i) => i.id === item.id);
