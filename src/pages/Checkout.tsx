@@ -160,9 +160,11 @@ const Checkout = () => {
         items.map(i => `• ${i.name} × ${i.quantity} = ৳${i.price * i.quantity}`).join('\n')
       );
       // Open WhatsApp after a short delay
-      setTimeout(() => {
-        window.open(`https://wa.me/8801341180374?text=${whatsappMsg}`, '_blank');
-      }, 1500);
+      if (whatsappNumber) {
+        setTimeout(() => {
+          window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
+        }, 1500);
+      }
     } catch (error) {
       console.error('Order error:', error);
       toast.error('অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
