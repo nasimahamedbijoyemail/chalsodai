@@ -64,10 +64,21 @@ const statusColors: Record<OrderStatus, 'default' | 'secondary' | 'destructive' 
   cancelled: 'destructive',
 };
 
+const statusFilters: { value: string; label: string }[] = [
+  { value: 'all', label: 'সব' },
+  { value: 'pending', label: 'পেন্ডিং' },
+  { value: 'payment_received', label: 'পেমেন্ট গৃহীত' },
+  { value: 'processing', label: 'প্রস্তুত হচ্ছে' },
+  { value: 'shipped', label: 'ডেলিভারিতে' },
+  { value: 'delivered', label: 'সম্পন্ন' },
+  { value: 'cancelled', label: 'বাতিল' },
+];
+
 const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [newStatus, setNewStatus] = useState<OrderStatus>('pending');
@@ -131,10 +142,13 @@ const AdminOrders = () => {
   };
 
   const filteredOrders = orders.filter(
-    (o) =>
-      o.order_number.toLowerCase().includes(search.toLowerCase()) ||
-      o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-      o.customer_phone.includes(search)
+    (o) => {
+      const matchesSearch = o.order_number.toLowerCase().includes(search.toLowerCase()) ||
+        o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
+        o.customer_phone.includes(search);
+      const matchesFilter = activeFilter === 'all' || o.status === activeFilter;
+      return matchesSearch && matchesFilter;
+    }
   );
 
   if (loading) {
@@ -149,7 +163,7 @@ const AdminOrders = () => {
     <div>
       <h1 className="text-2xl font-bold mb-6">অর্ডার ম্যানেজমেন্ট</h1>
 
-      <div className="mb-6">
+      <div className="mb-6 space-y-3">
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -158,6 +172,21 @@ const AdminOrders = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {statusFilters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setActiveFilter(f.value)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                activeFilter === f.value
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
       </div>
 
