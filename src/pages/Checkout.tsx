@@ -66,7 +66,7 @@ const Checkout = () => {
   }, [user]);
 
   if (items.length === 0 && !submitted) {
-    navigate('/cart');
+    navigate('/');
     return null;
   }
 
