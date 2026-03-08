@@ -113,7 +113,7 @@ const Categories = () => {
           {products.length === 0 ? 'এখনো কোনো চাল যোগ করা হয়নি' : 'এই ক্যাটাগরিতে কোনো চাল নেই'}
         </p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {filtered.map((product) => (
             <ProductCard
               key={product.id}
