@@ -64,10 +64,21 @@ const statusColors: Record<OrderStatus, 'default' | 'secondary' | 'destructive' 
   cancelled: 'destructive',
 };
 
+const statusFilters: { value: string; label: string }[] = [
+  { value: 'all', label: 'সব' },
+  { value: 'pending', label: 'পেন্ডিং' },
+  { value: 'payment_received', label: 'পেমেন্ট গৃহীত' },
+  { value: 'processing', label: 'প্রস্তুত হচ্ছে' },
+  { value: 'shipped', label: 'ডেলিভারিতে' },
+  { value: 'delivered', label: 'সম্পন্ন' },
+  { value: 'cancelled', label: 'বাতিল' },
+];
+
 const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [newStatus, setNewStatus] = useState<OrderStatus>('pending');
