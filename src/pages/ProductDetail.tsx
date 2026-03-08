@@ -80,7 +80,7 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    addItem({
+    setBuyNowItem({
       id: product.id,
       name: product.name,
       price: Number(product.price),
