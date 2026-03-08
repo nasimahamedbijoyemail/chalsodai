@@ -316,6 +316,38 @@ const Profile = () => {
                   </DialogContent>
                 </Dialog>
 
+                {/* Forgot Password - Send Reset Email */}
+                <button
+                  onClick={async () => {
+                    if (!user?.email || user.email.endsWith('@phone.local')) {
+                      toast.error('পাসওয়ার্ড রিসেট করতে একটি সঠিক ইমেইল প্রয়োজন');
+                      return;
+                    }
+                    toast.loading('রিসেট লিংক পাঠানো হচ্ছে...');
+                    const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+                      redirectTo: `${window.location.origin}/reset-password`,
+                    });
+                    toast.dismiss();
+                    if (error) {
+                      toast.error('সমস্যা হয়েছে, আবার চেষ্টা করুন');
+                    } else {
+                      toast.success(`${user.email} এ রিসেট লিংক পাঠানো হয়েছে!`);
+                    }
+                  }}
+                  className="w-full flex items-center justify-between p-3 rounded-xl border border-border/60 hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Mail className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium">পাসওয়ার্ড ভুলে গেছেন?</p>
+                      <p className="text-[10px] text-muted-foreground">ইমেইলে রিসেট লিংক পাঠান</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </button>
+
                 {/* Logout */}
                 <button
                   onClick={async () => { await signOut(); navigate('/'); }}
