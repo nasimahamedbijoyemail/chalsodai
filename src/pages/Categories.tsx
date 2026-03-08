@@ -188,7 +188,7 @@ const Categories = () => {
               <span>
                 {filtered.length}টি পণ্য পাওয়া গেছে
                 {activeCategory && <> — <strong className="text-foreground">{activeCategory}</strong></>}
-                {searchQuery && <> — "<strong className="text-foreground">{searchQuery}</strong>"></>}
+                {searchQuery && <> — &ldquo;<strong className="text-foreground">{searchQuery}</strong>&rdquo;</>}
               </span>
               <button
                 onClick={() => { handleFilter(null); setSearchQuery(''); }}
