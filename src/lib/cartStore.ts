@@ -12,12 +12,17 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  buyNowItems: CartItem[];
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
+  setBuyNowItem: (item: Omit<CartItem, 'quantity'>) => void;
+  updateBuyNowQuantity: (id: string, quantity: number) => void;
+  clearBuyNow: () => void;
+  buyNowTotal: () => number;
 }
 
 export const useCartStore = create<CartStore>()(
