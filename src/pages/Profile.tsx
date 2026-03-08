@@ -44,17 +44,12 @@ const Profile = () => {
 
     if (user) {
       const fetchData = async () => {
-        const [profileRes, deletionRes] = await Promise.all([
-          supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
-          supabase.from('account_deletion_requests').select('id').eq('user_id', user.id).eq('status', 'pending').maybeSingle(),
-        ]);
-
-        if (profileRes.data) {
-          setFullName(profileRes.data.full_name || '');
-          setPhone(profileRes.data.phone || '');
-          setAddress(profileRes.data.address || '');
+        const { data } = await supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle();
+        if (data) {
+          setFullName(data.full_name || '');
+          setPhone(data.phone || '');
+          setAddress(data.address || '');
         }
-        setDeletionRequested(!!deletionRes.data);
         setLoading(false);
       };
       fetchData();
