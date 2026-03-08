@@ -159,8 +159,10 @@ const Index = () => {
 
         {/* Featured Products */}
         {loading ? (
-          <div className="py-10 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+          <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
         ) : products.length > 0 ? (
           <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
