@@ -186,7 +186,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="container py-10 max-w-2xl">
+    <div className="container py-10 pb-24 md:pb-10 max-w-2xl">
       <PageHead title="চেকআউট" />
       <h1 className="text-3xl font-bold mb-8">অর্ডার সম্পন্ন করুন</h1>
 
