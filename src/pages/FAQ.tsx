@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/accordion';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import PageHead from '@/components/PageHead';
 
 interface FAQ {
   id: string;
