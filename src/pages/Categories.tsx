@@ -68,6 +68,7 @@ const Categories = () => {
 
   return (
     <div className="container py-10">
+      <PageHead title="চালের ধরণ" description="চাল সদাইতে সকল ধরনের চাল দেখুন — মিনিকেট, নাজিরশাইল, বাসমতি ও আরও অনেক।" />
       <h1 className="text-3xl font-bold mb-2">চালের ধরণ</h1>
       <p className="text-muted-foreground mb-6">আমাদের সকল ধরনের চাল দেখুন এবং অর্ডার করুন</p>
 

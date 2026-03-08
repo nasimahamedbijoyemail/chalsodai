@@ -82,6 +82,7 @@ const Auth = () => {
 
   return (
     <div className="container py-16 max-w-md">
+      <PageHead title={isLogin ? 'লগইন' : 'রেজিস্টার'} />
       <div className="rounded-xl border bg-card p-8">
         <h1 className="text-2xl font-bold text-center mb-6">
           {isLogin ? 'চাল সদাইতে লগইন করুন' : 'অ্যাকাউন্ট তৈরি করুন'}

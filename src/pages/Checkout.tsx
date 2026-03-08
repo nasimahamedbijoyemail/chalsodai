@@ -9,8 +9,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { CheckCircle, Loader2, Banknote, Smartphone, Lock } from 'lucide-react';
+import PageHead from '@/components/PageHead';
 
 type PaymentMethod = 'bkash' | 'cod';
+
+const DELIVERY_CHARGE = 60;
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCartStore();
@@ -24,6 +27,9 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const subtotal = totalPrice();
+  const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
     if (user) {
@@ -63,7 +69,6 @@ const Checkout = () => {
     try {
       let currentUser = user;
 
-      // Auto-create account for guest if password provided
       if (!user && guestPassword.trim() && guestPassword.length >= 6) {
         const authEmail = `${phone.trim()}@phone.local`;
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
@@ -80,7 +85,6 @@ const Checkout = () => {
           }
         } else if (signUpData?.user) {
           currentUser = signUpData.user;
-          // Update profile with phone and address
           await supabase.from('profiles').upsert({
             user_id: signUpData.user.id,
             full_name: name,
@@ -99,7 +103,8 @@ const Checkout = () => {
           customer_address: address,
           bkash_number: paymentMethod === 'bkash' ? bkashNumber : null,
           payment_method: paymentMethod,
-          total_amount: totalPrice(),
+          total_amount: grandTotal,
+          delivery_charge: DELIVERY_CHARGE,
         })
         .select()
         .single();
@@ -146,6 +151,7 @@ const Checkout = () => {
   if (submitted) {
     return (
       <div className="container py-20 text-center">
+        <PageHead title="অর্ডার সফল" />
         <CheckCircle className="mx-auto h-16 w-16 text-primary mb-4" />
         <h1 className="text-2xl font-bold mb-2">অর্ডার সফল হয়েছে!</h1>
         <p className="text-muted-foreground mb-6">
@@ -163,6 +169,7 @@ const Checkout = () => {
 
   return (
     <div className="container py-10 max-w-2xl">
+      <PageHead title="চেকআউট" />
       <h1 className="text-3xl font-bold mb-8">অর্ডার সম্পন্ন করুন</h1>
 
       {!user && (
@@ -183,9 +190,19 @@ const Checkout = () => {
               <span>৳{item.price * item.quantity}</span>
             </div>
           ))}
-          <div className="border-t pt-2 flex justify-between font-bold">
-            <span>মোট</span>
-            <span className="text-primary">৳{totalPrice()}</span>
+          <div className="border-t pt-2 space-y-1">
+            <div className="flex justify-between text-muted-foreground">
+              <span>সাবটোটাল</span>
+              <span>৳{subtotal}</span>
+            </div>
+            <div className="flex justify-between text-muted-foreground">
+              <span>ডেলিভারি চার্জ</span>
+              <span>৳{DELIVERY_CHARGE}</span>
+            </div>
+            <div className="flex justify-between font-bold border-t pt-1">
+              <span>মোট</span>
+              <span className="text-primary">৳{grandTotal}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -223,12 +240,12 @@ const Checkout = () => {
         </div>
       </div>
 
-      {/* bKash Payment Info (conditional) */}
+      {/* bKash Payment Info */}
       {paymentMethod === 'bkash' && (
         <div className="rounded-xl border-2 border-secondary bg-secondary/10 p-5 mb-6">
           <h2 className="font-bold text-lg mb-2">💳 বিকাশ পেমেন্ট</h2>
           <p className="text-sm mb-3">
-            আপনার অর্ডারের মোট মূল্য <strong className="text-primary">৳{totalPrice()}</strong> টাকা
+            আপনার অর্ডারের মোট মূল্য <strong className="text-primary">৳{grandTotal}</strong> টাকা
             নিচের বিকাশ নম্বরে পাঠান:
           </p>
           <div className="rounded-lg bg-background p-4 text-center mb-3">
@@ -253,7 +270,7 @@ const Checkout = () => {
         <div className="rounded-xl border-2 border-secondary bg-secondary/10 p-5 mb-6">
           <h2 className="font-bold text-lg mb-2">💵 ক্যাশ অন ডেলিভারি</h2>
           <p className="text-sm">
-            ডেলিভারি ম্যান আপনার পণ্য পৌঁছে দেওয়ার সময় <strong className="text-primary">৳{totalPrice()}</strong> টাকা নগদে পরিশোধ করুন।
+            ডেলিভারি ম্যান আপনার পণ্য পৌঁছে দেওয়ার সময় <strong className="text-primary">৳{grandTotal}</strong> টাকা নগদে পরিশোধ করুন।
           </p>
         </div>
       )}
