@@ -52,6 +52,15 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ items: [] }),
       totalItems: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
       totalPrice: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+      setBuyNowItem: (item) => set({ buyNowItems: [{ ...item, quantity: 1 }] }),
+      updateBuyNowQuantity: (id, quantity) =>
+        set((state) => ({
+          buyNowItems: quantity <= 0
+            ? state.buyNowItems.filter((i) => i.id !== id)
+            : state.buyNowItems.map((i) => (i.id === id ? { ...i, quantity } : i)),
+        })),
+      clearBuyNow: () => set({ buyNowItems: [] }),
+      buyNowTotal: () => get().buyNowItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
     }),
     {
       name: 'chal-sodai-cart',
