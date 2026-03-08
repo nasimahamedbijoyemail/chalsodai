@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import { Loader2, Send, Plus, ArrowLeft, MessageCircle } from 'lucide-react';
 import PageHead from '@/components/PageHead';
+import PageTransition from '@/components/PageTransition';
 
 interface Conversation {
   id: string;
