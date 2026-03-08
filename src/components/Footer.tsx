@@ -1,19 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Phone, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+    const fetchSettings = async () => {
       const { data } = await supabase.from('site_settings').select('key, value');
       const map: Record<string, string> = {};
       data?.forEach((s) => (map[s.key] = s.value));
       setSettings(map);
     };
-    fetch();
+    fetchSettings();
   }, []);
 
   return (
@@ -29,10 +31,10 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-3">দ্রুত লিংক</h4>
             <div className="space-y-2 text-sm">
-              <Link to="/" className="block text-muted-foreground hover:text-primary">হোম</Link>
-              <Link to="/categories" className="block text-muted-foreground hover:text-primary">চালের ধরণ</Link>
-              <Link to="/faq" className="block text-muted-foreground hover:text-primary">সাধারণ জিজ্ঞাসা</Link>
-              <Link to="/contact" className="block text-muted-foreground hover:text-primary">যোগাযোগ</Link>
+              <Link to="/" className="block text-muted-foreground hover:text-primary transition-colors">হোম</Link>
+              <Link to="/categories" className="block text-muted-foreground hover:text-primary transition-colors">চালের ধরণ</Link>
+              <Link to="/faq" className="block text-muted-foreground hover:text-primary transition-colors">সাধারণ জিজ্ঞাসা</Link>
+              <Link to="/contact" className="block text-muted-foreground hover:text-primary transition-colors">যোগাযোগ</Link>
             </div>
           </div>
           <div>
@@ -41,12 +43,12 @@ const Footer = () => {
               <p>📍 ঢাকা, বাংলাদেশ</p>
               {settings.contact_phone && <p>📞 {settings.contact_phone}</p>}
               {settings.whatsapp_number && (
-                <a href={`https://wa.me/${settings.whatsapp_number.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="block hover:text-primary">
+                <a href={`https://wa.me/${settings.whatsapp_number.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors">
                   💬 হোয়াটসঅ্যাপ
                 </a>
               )}
               {settings.facebook_url && (
-                <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="block hover:text-primary">
+                <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors">
                   📘 ফেসবুক
                 </a>
               )}

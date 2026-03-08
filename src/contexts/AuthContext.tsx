@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -19,11 +19,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [adminCheckedFor, setAdminCheckedFor] = useState<string | null>(null);
+  const adminCheckedForRef = useRef<string | null>(null);
 
   const checkAdminRole = async (userId: string) => {
-    // Skip if already checked for this user
-    if (adminCheckedFor === userId) return;
+    if (adminCheckedForRef.current === userId) return;
+    adminCheckedForRef.current = userId;
     const { data } = await supabase
       .from('user_roles')
       .select('role')
@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .eq('role', 'admin')
       .maybeSingle();
     setIsAdmin(!!data);
-    setAdminCheckedFor(userId);
   };
 
   useEffect(() => {
@@ -43,12 +42,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        setTimeout(() => {
-          checkAdminRole(session.user.id);
-        }, 0);
+        setTimeout(() => checkAdminRole(session.user.id), 0);
       } else {
         setIsAdmin(false);
-        setAdminCheckedFor(null);
+        adminCheckedForRef.current = null;
       }
       setLoading(false);
     });
@@ -89,6 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setSession(null);
     setIsAdmin(false);
+    adminCheckedForRef.current = null;
   };
 
   return (
