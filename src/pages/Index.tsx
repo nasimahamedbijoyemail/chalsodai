@@ -136,19 +136,24 @@ const Index = () => {
           </div>
         ) : products.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard
+            {products.map((product, i) => (
+              <div
                 key={product.id}
-                product={{
-                  id: product.id,
-                  name: product.name,
-                  category: product.rice_categories?.name || '',
-                  price: Number(product.price),
-                  packSize: product.pack_size,
-                  description: product.description || '',
-                  image: product.image_url || '/placeholder.svg',
-                }}
-              />
+                className="opacity-0 animate-fade-in"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <ProductCard
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    category: product.rice_categories?.name || '',
+                    price: Number(product.price),
+                    packSize: product.pack_size,
+                    description: product.description || '',
+                    image: product.image_url || '/placeholder.svg',
+                  }}
+                />
+              </div>
             ))}
           </div>
         ) : (
