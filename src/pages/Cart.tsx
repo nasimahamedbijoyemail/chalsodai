@@ -60,7 +60,7 @@ const Cart = () => {
           ))}
         </div>
 
-        <div className="rounded-xl border bg-card p-6 h-fit space-y-4">
+        <div className="rounded-xl border bg-card p-6 h-fit lg:sticky lg:top-20 space-y-4">
           <h2 className="text-lg font-bold">অর্ডার সারাংশ</h2>
           <div className="space-y-2 text-sm">
             {items.map((item) => (
