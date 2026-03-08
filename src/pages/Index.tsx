@@ -62,7 +62,23 @@ const Index = () => {
 
   return (
     <div>
-      <PageHead title="হোম" description="চাল সদাই — ঢাকা শহরে সেরা মানের চাল সরাসরি আপনার ঘরে। বিকাশে পেমেন্ট, দ্রুত ডেলিভারি।" />
+      <PageHead
+        title="হোম"
+        description="চাল সদাই — ঢাকা শহরে সেরা মানের চাল সরাসরি আপনার ঘরে। বিকাশে পেমেন্ট, দ্রুত ডেলিভারি।"
+        canonicalPath="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'চাল সদাই',
+          url: 'https://chalsodai.lovable.app',
+          description: 'ঢাকায় সেরা মানের চাল সরাসরি আপনার ঘরে। দ্রুত ডেলিভারি।',
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: 'https://chalsodai.lovable.app/categories?filter={search_term_string}',
+            'query-input': 'required name=search_term_string',
+          },
+        }}
+      />
 
       {/* Hero Section */}
       <section className="overflow-hidden">
@@ -71,10 +87,10 @@ const Index = () => {
           <div className="container">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="space-y-2">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-secondary leading-tight">
                   সেরা মানের চাল, সরাসরি আপনার ঘরে
                 </h1>
-                <p className="text-sm md:text-base text-primary-foreground/80">
+                <p className="text-xs sm:text-sm md:text-base text-primary-foreground/80">
                   ঢাকা শহরে দ্রুত ডেলিভারি। বিশ্বস্ত মানের চাল সাশ্রয়ী মূল্যে।
                 </p>
               </div>
@@ -92,7 +108,7 @@ const Index = () => {
 
       {/* Features */}
       <section className="bg-section-warm py-12">
-        <div className="container grid gap-6 md:grid-cols-3">
+        <div className="container grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
           {[
             { icon: Truck, title: 'দ্রুত ডেলিভারি', desc: 'মাত্র ২৪ ঘণ্টার মধ্যে' },
             { icon: Shield, title: 'মান নিশ্চিত', desc: 'সেরা মানের চাল গ্যারান্টি' },
@@ -146,7 +162,7 @@ const Index = () => {
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
           </div>
         ) : products.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
             {products.map((product, i) => (
               <div
                 key={product.id}

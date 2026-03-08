@@ -57,19 +57,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           />
         </div>
       </Link>
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3">
         <Link to={`/product/${product.id}`}>
           <span className="text-xs font-medium text-secondary">{product.category}</span>
-          <h3 className="font-bold text-foreground mt-1">{product.name}</h3>
+          <h3 className="font-bold text-foreground mt-1 text-sm sm:text-base line-clamp-1">{product.name}</h3>
           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{product.description}</p>
         </Link>
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-lg font-bold text-primary">৳{product.price}</span>
-            <span className="text-xs text-muted-foreground ml-1">/ {product.packSize}</span>
-          </div>
+        <div>
+          <span className="text-base sm:text-lg font-bold text-primary">৳{product.price}</span>
+          <span className="text-xs text-muted-foreground ml-1">/ {product.packSize}</span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Button
             onClick={handleBuyNow}
             className="flex-1"
@@ -82,8 +80,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
             variant="outline"
             size="sm"
           >
-            <ShoppingCart className="h-4 w-4 mr-1" />
-            কার্টে যোগ করুন
+            <ShoppingCart className="h-4 w-4 sm:mr-1" />
+            <span className="sm:inline hidden">কার্টে</span>
+            <span className="sm:hidden">কার্টে যোগ</span>
           </Button>
         </div>
       </CardContent>
