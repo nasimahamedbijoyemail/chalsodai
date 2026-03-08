@@ -1,7 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminNotificationBell from '@/components/AdminNotificationBell';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
   Package,
@@ -15,6 +23,7 @@ import {
   Trash2,
   KeyRound,
   Image,
+  Menu,
 } from 'lucide-react';
 
 const adminLinks = [
@@ -35,6 +44,9 @@ const AdminLayout = () => {
   const { isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const activeLabel = adminLinks.find((l) => l.to === location.pathname)?.label || 'অ্যাডমিন';
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -56,7 +68,7 @@ const AdminLayout = () => {
     <div className="min-h-screen">
       <div className="container py-6">
         <div className="flex gap-6">
-          {/* Sidebar */}
+          {/* Desktop Sidebar */}
           <aside className="hidden md:block w-64 shrink-0">
             <div className="sticky top-20 rounded-xl border bg-card p-4">
               <div className="flex items-center justify-between mb-4 px-3">
@@ -85,29 +97,43 @@ const AdminLayout = () => {
             </div>
           </aside>
 
-          {/* Mobile nav */}
-          <div className="md:hidden w-full mb-4 overflow-x-auto pb-2">
-            <div className="flex gap-2">
-              <div className="shrink-0">
-                <AdminNotificationBell />
-              </div>
-              {adminLinks.map((link) => {
-                const isActive = location.pathname === link.to;
-                return (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
-                      isActive
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-card border text-muted-foreground'
-                    }`}
-                  >
-                    <link.icon className="h-4 w-4" />
-                    {link.label}
-                  </Link>
-                );
-              })}
+          {/* Mobile top bar + Sheet nav */}
+          <div className="md:hidden w-full mb-2">
+            <div className="flex items-center justify-between gap-2 rounded-xl border bg-card p-3">
+              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Menu className="h-4 w-4" />
+                    <span className="font-semibold text-sm truncate">{activeLabel}</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-72 p-0">
+                  <SheetHeader className="p-4 pb-2 border-b">
+                    <SheetTitle className="text-left">অ্যাডমিন প্যানেল</SheetTitle>
+                  </SheetHeader>
+                  <nav className="p-2 space-y-0.5 overflow-y-auto max-h-[calc(100vh-80px)]">
+                    {adminLinks.map((link) => {
+                      const isActive = location.pathname === link.to;
+                      return (
+                        <Link
+                          key={link.to}
+                          to={link.to}
+                          onClick={() => setSheetOpen(false)}
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                            isActive
+                              ? 'bg-primary text-primary-foreground'
+                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          }`}
+                        >
+                          <link.icon className="h-4 w-4" />
+                          {link.label}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </SheetContent>
+              </Sheet>
+              <AdminNotificationBell />
             </div>
           </div>
 
