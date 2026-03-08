@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft, Package } from 'lucide-react';
+import PageTransition from '@/components/PageTransition';
+import OrderTimeline from '@/components/OrderTimeline';
 
 interface OrderItem {
   id: string;
@@ -90,98 +92,105 @@ const OrderDetail = () => {
   const subtotal = items.reduce((sum, i) => sum + i.product_price * i.quantity, 0);
 
   return (
-    <div className="container py-10 max-w-2xl">
-      <Helmet>
-        <title>অর্ডার {order.order_number} — চাল সদাই</title>
-      </Helmet>
+    <PageTransition>
+      <div className="container py-10 max-w-2xl pb-24 md:pb-10">
+        <Helmet>
+          <title>অর্ডার {order.order_number} — চাল সদাই</title>
+        </Helmet>
 
-      <Button variant="ghost" onClick={() => navigate('/my-orders')} className="mb-6">
-        <ArrowLeft className="h-4 w-4 mr-2" /> আমার অর্ডারে ফিরুন
-      </Button>
+        <Button variant="ghost" onClick={() => navigate('/my-orders')} className="mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" /> আমার অর্ডারে ফিরুন
+        </Button>
 
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">{order.order_number}</h1>
-          <p className="text-sm text-muted-foreground">
-            {new Date(order.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold">{order.order_number}</h1>
+            <p className="text-sm text-muted-foreground">
+              {new Date(order.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
+          <Badge variant={status.variant} className="text-sm">{status.label}</Badge>
         </div>
-        <Badge variant={status.variant} className="text-sm">{status.label}</Badge>
-      </div>
 
-      {/* Order Items */}
-      <div className="rounded-xl border bg-card p-5 mb-6">
-        <h2 className="font-bold mb-4">পণ্যসমূহ</h2>
-        <div className="space-y-3">
-          {items.map((item) => (
-            <div key={item.id} className="flex justify-between items-center text-sm">
-              <div>
-                <p className="font-medium">{item.product_name}</p>
-                <p className="text-muted-foreground">{item.pack_size} × {item.quantity}</p>
+        {/* Order Timeline */}
+        <div className="mb-6">
+          <OrderTimeline currentStatus={order.status} />
+        </div>
+
+        {/* Order Items */}
+        <div className="rounded-xl border bg-card p-5 mb-6 premium-card">
+          <h2 className="font-bold mb-4">পণ্যসমূহ</h2>
+          <div className="space-y-3">
+            {items.map((item) => (
+              <div key={item.id} className="flex justify-between items-center text-sm">
+                <div>
+                  <p className="font-medium">{item.product_name}</p>
+                  <p className="text-muted-foreground">{item.pack_size} × {item.quantity}</p>
+                </div>
+                <p className="font-semibold">৳{item.product_price * item.quantity}</p>
               </div>
-              <p className="font-semibold">৳{item.product_price * item.quantity}</p>
-            </div>
-          ))}
-        </div>
-        <div className="border-t mt-4 pt-3 space-y-1 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">সাবটোটাল</span>
-            <span>৳{subtotal}</span>
+            ))}
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">ডেলিভারি চার্জ</span>
-            <span>{order.delivery_charge > 0 ? `৳${order.delivery_charge}` : 'ফ্রি'}</span>
-          </div>
-          <div className="flex justify-between font-bold text-base pt-1 border-t">
-            <span>মোট</span>
-            <span className="text-primary">৳{order.total_amount}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Delivery Info */}
-      <div className="rounded-xl border bg-card p-5 mb-6">
-        <h2 className="font-bold mb-3">ডেলিভারি তথ্য</h2>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">নাম</span>
-            <span>{order.customer_name}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">ফোন</span>
-            <span>{order.customer_phone}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">ঠিকানা</span>
-            <span className="text-right max-w-[60%]">{order.customer_address}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Payment Info */}
-      <div className="rounded-xl border bg-card p-5">
-        <h2 className="font-bold mb-3">পেমেন্ট তথ্য</h2>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">পদ্ধতি</span>
-            <span>{order.payment_method === 'bkash' ? 'বিকাশ' : 'ক্যাশ অন ডেলিভারি'}</span>
-          </div>
-          {order.bkash_number && (
+          <div className="border-t mt-4 pt-3 space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">ট্রানজেকশন আইডি</span>
-              <span>{order.bkash_number}</span>
+              <span className="text-muted-foreground">সাবটোটাল</span>
+              <span>৳{subtotal}</span>
             </div>
-          )}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">ডেলিভারি চার্জ</span>
+              <span>{order.delivery_charge > 0 ? `৳${order.delivery_charge}` : 'ফ্রি'}</span>
+            </div>
+            <div className="flex justify-between font-bold text-base pt-1 border-t">
+              <span>মোট</span>
+              <span className="text-primary">৳{order.total_amount}</span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {order.admin_notes && (
-        <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 mt-6">
-          <h2 className="font-bold mb-2">অ্যাডমিন নোট</h2>
-          <p className="text-sm text-muted-foreground">{order.admin_notes}</p>
+        {/* Delivery Info */}
+        <div className="rounded-xl border bg-card p-5 mb-6 premium-card">
+          <h2 className="font-bold mb-3">ডেলিভারি তথ্য</h2>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">নাম</span>
+              <span>{order.customer_name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">ফোন</span>
+              <span>{order.customer_phone}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">ঠিকানা</span>
+              <span className="text-right max-w-[60%]">{order.customer_address}</span>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Payment Info */}
+        <div className="rounded-xl border bg-card p-5 premium-card">
+          <h2 className="font-bold mb-3">পেমেন্ট তথ্য</h2>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">পদ্ধতি</span>
+              <span>{order.payment_method === 'bkash' ? 'বিকাশ' : 'ক্যাশ অন ডেলিভারি'}</span>
+            </div>
+            {order.bkash_number && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">ট্রানজেকশন আইডি</span>
+                <span>{order.bkash_number}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {order.admin_notes && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 mt-6">
+            <h2 className="font-bold mb-2">অ্যাডমিন নোট</h2>
+            <p className="text-sm text-muted-foreground">{order.admin_notes}</p>
+          </div>
+        )}
+      </div>
+    </PageTransition>
   );
 };
 

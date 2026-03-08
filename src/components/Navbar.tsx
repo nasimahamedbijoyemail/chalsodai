@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
 import SearchDialog from '@/components/SearchDialog';
+import ThemeToggle from '@/components/ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +53,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <SearchDialog />
+          <ThemeToggle />
           {user && <NotificationBell />}
           
           <Link to="/cart" className="relative">

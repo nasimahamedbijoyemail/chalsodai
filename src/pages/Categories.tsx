@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import ProductCard from '@/components/ProductCard';
 import ProductCardSkeleton from '@/components/ProductCardSkeleton';
 import PageHead from '@/components/PageHead';
+import PageTransition from '@/components/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface Category {
@@ -75,70 +77,79 @@ const Categories = () => {
   }
 
   return (
-    <div className="container py-10 pb-24 md:pb-10">
-      <PageHead title="চালের ধরণ" description="চাল সদাইতে সকল ধরনের চাল দেখুন — মিনিকেট, নাজিরশাইল, বাসমতি ও আরও অনেক।" canonicalPath="/categories" />
-      <h1 className="text-3xl font-bold mb-2">চালের ধরণ</h1>
-      <p className="text-muted-foreground mb-6">আমাদের সকল ধরনের চাল দেখুন এবং অর্ডার করুন</p>
+    <PageTransition>
+      <div className="container py-10 pb-24 md:pb-10">
+        <PageHead title="চালের ধরণ" description="চাল সদাইতে সকল ধরনের চাল দেখুন — মিনিকেট, নাজিরশাইল, বাসমতি ও আরও অনেক।" canonicalPath="/categories" />
+        <h1 className="text-3xl font-bold mb-2">চালের ধরণ</h1>
+        <p className="text-muted-foreground mb-6">আমাদের সকল ধরনের চাল দেখুন এবং অর্ডার করুন</p>
 
-      <div className="relative max-w-md mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="চালের নাম দিয়ে খুঁজুন..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
-        />
-      </div>
+        <div className="relative max-w-md mb-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="চালের নাম দিয়ে খুঁজুন..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
 
-      <div className="flex gap-2 flex-wrap mb-8">
-        <button
-          onClick={() => handleFilter(null)}
-          className={`rounded-full px-5 py-2 text-sm font-medium border transition-colors ${
-            !activeCategory
-              ? 'bg-primary text-primary-foreground border-primary'
-              : 'bg-card border-border hover:bg-muted'
-          }`}
-        >
-          সব
-        </button>
-        {categories.map((cat) => (
+        <div className="flex gap-2 flex-wrap mb-8">
           <button
-            key={cat.id}
-            onClick={() => handleFilter(cat.name)}
-            className={`rounded-full px-5 py-2 text-sm font-medium border transition-colors ${
-              activeCategory === cat.name
-                ? 'bg-primary text-primary-foreground border-primary'
+            onClick={() => handleFilter(null)}
+            className={`rounded-full px-5 py-2 text-sm font-medium border transition-all ${
+              !activeCategory
+                ? 'bg-primary text-primary-foreground border-primary shadow-md'
                 : 'bg-card border-border hover:bg-muted'
             }`}
           >
-            {cat.name}
+            সব
           </button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <p className="text-center text-muted-foreground py-20">
-          {products.length === 0 ? 'এখনো কোনো চাল যোগ করা হয়নি' : 'এই ক্যাটাগরিতে কোনো চাল নেই'}
-        </p>
-      ) : (
-        <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={{
-                id: product.id,
-                name: product.name,
-                category: product.rice_categories?.name || '',
-                price: Number(product.price),
-                packSize: product.pack_size,
-                description: product.description || '',
-                image: product.image_url || '/placeholder.svg',
-              }}
-            />
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleFilter(cat.name)}
+              className={`rounded-full px-5 py-2 text-sm font-medium border transition-all ${
+                activeCategory === cat.name
+                  ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                  : 'bg-card border-border hover:bg-muted'
+              }`}
+            >
+              {cat.name}
+            </button>
           ))}
         </div>
-      )}
-    </div>
+
+        {filtered.length === 0 ? (
+          <p className="text-center text-muted-foreground py-20">
+            {products.length === 0 ? 'এখনো কোনো চাল যোগ করা হয়নি' : 'এই ক্যাটাগরিতে কোনো চাল নেই'}
+          </p>
+        ) : (
+          <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            {filtered.map((product, i) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05, duration: 0.3 }}
+              >
+                <ProductCard
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    category: product.rice_categories?.name || '',
+                    price: Number(product.price),
+                    packSize: product.pack_size,
+                    description: product.description || '',
+                    image: product.image_url || '/placeholder.svg',
+                  }}
+                />
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </PageTransition>
   );
 };
 
