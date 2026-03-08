@@ -28,14 +28,20 @@ const Checkout = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
   const subtotal = totalPrice();
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
-    // Fetch WhatsApp number from settings
-    supabase.from('site_settings').select('value').eq('key', 'whatsapp_number').maybeSingle()
-      .then(({ data }) => { if (data?.value) setWhatsappNumber(data.value.replace(/[^0-9]/g, '')); });
+    // Fetch WhatsApp number and bkash number from settings
+    supabase.from('site_settings').select('key, value').in('key', ['whatsapp_number', 'bkash_number'])
+      .then(({ data }) => {
+        data?.forEach(s => {
+          if (s.key === 'whatsapp_number') setWhatsappNumber(s.value.replace(/[^0-9]/g, ''));
+          if (s.key === 'bkash_number') setBkashDisplayNumber(s.value);
+        });
+      });
 
     if (user) {
       const fetchProfile = async () => {
@@ -275,7 +281,7 @@ const Checkout = () => {
           </p>
           <div className="rounded-lg bg-background p-4 text-center mb-3">
             <p className="text-xs text-muted-foreground mb-1">বিকাশ নম্বর</p>
-            <p className="text-2xl font-bold text-primary">01786698614</p>
+            <p className="text-2xl font-bold text-primary">{bkashDisplayNumber}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="bkash">বিকাশ ট্রানজেকশন আইডি লিখুন</Label>
