@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Package, ShoppingBag, Users, TrendingUp, Clock } from 'lucide-react';
+import { Package, ShoppingBag, Users, TrendingUp, Clock, Crown, UserPlus, ArrowRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 interface Stats {
@@ -29,6 +30,19 @@ interface OrderRaw {
   created_at: string;
 }
 
+interface RecentCustomer {
+  user_id: string;
+  full_name: string | null;
+  phone: string | null;
+  created_at: string;
+}
+
+interface TopProduct {
+  product_name: string;
+  total_qty: number;
+  total_revenue: number;
+}
+
 const statusLabels: Record<string, string> = {
   pending: 'পেমেন্ট অপেক্ষায়',
   payment_received: 'পেমেন্ট গৃহীত',
@@ -53,22 +67,39 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({ customers: 0, orders: 0, products: 0, pendingOrders: 0, totalRevenue: 0, deliveredOrders: 0 });
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [allOrders, setAllOrders] = useState<OrderRaw[]>([]);
+  const [recentCustomers, setRecentCustomers] = useState<RecentCustomer[]>([]);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [customersRes, ordersRes, productsRes, pendingRes, allOrdersRes, recentRes] = await Promise.all([
+      const [customersRes, ordersRes, productsRes, pendingRes, allOrdersRes, recentRes, recentCustRes, orderItemsRes] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('orders').select('id', { count: 'exact', head: true }),
         supabase.from('rice_products').select('id', { count: 'exact', head: true }),
         supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('orders').select('total_amount, status, created_at').order('created_at', { ascending: true }),
         supabase.from('orders').select('id, order_number, customer_name, total_amount, status, created_at').order('created_at', { ascending: false }).limit(5),
+        supabase.from('profiles').select('user_id, full_name, phone, created_at').order('created_at', { ascending: false }).limit(5),
+        supabase.from('order_items').select('product_name, quantity, product_price'),
       ]);
 
       const orders = allOrdersRes.data || [];
       const deliveredOrders = orders.filter(o => o.status === 'delivered');
       const totalRevenue = deliveredOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+
+      // Calculate top products
+      const productMap = new Map<string, { total_qty: number; total_revenue: number }>();
+      (orderItemsRes.data || []).forEach((item) => {
+        const existing = productMap.get(item.product_name) || { total_qty: 0, total_revenue: 0 };
+        existing.total_qty += item.quantity;
+        existing.total_revenue += item.product_price * item.quantity;
+        productMap.set(item.product_name, existing);
+      });
+      const sortedProducts = Array.from(productMap.entries())
+        .map(([product_name, data]) => ({ product_name, ...data }))
+        .sort((a, b) => b.total_qty - a.total_qty)
+        .slice(0, 5);
 
       setStats({
         customers: customersRes.count || 0,
@@ -80,6 +111,8 @@ const AdminDashboard = () => {
       });
       setAllOrders(orders);
       setRecentOrders(recentRes.data || []);
+      setRecentCustomers(recentCustRes.data || []);
+      setTopProducts(sortedProducts);
       setLoading(false);
     };
     fetchStats();
@@ -87,15 +120,12 @@ const AdminDashboard = () => {
 
   const monthlyData = useMemo(() => {
     const map = new Map<string, { revenue: number; orders: number; month: string }>();
-
-    // Generate last 6 months
     const now = new Date();
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       map.set(key, { revenue: 0, orders: 0, month: MONTH_NAMES_BN[d.getMonth()] });
     }
-
     allOrders.forEach((order) => {
       const d = new Date(order.created_at);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -107,7 +137,6 @@ const AdminDashboard = () => {
         }
       }
     });
-
     return Array.from(map.values());
   }, [allOrders]);
 
@@ -185,36 +214,115 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Recent Orders */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="text-lg">সাম্প্রতিক অর্ডার</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
-          ) : recentOrders.length === 0 ? (
-            <p className="text-muted-foreground text-sm">কোনো অর্ডার নেই</p>
-          ) : (
-            <div className="space-y-3">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between gap-3 py-2 border-b last:border-0">
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">{order.order_number}</p>
-                    <p className="text-xs text-muted-foreground truncate">{order.customer_name}</p>
+      {/* Bottom grid: Recent Orders + Top Products + Recent Customers */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-6">
+        {/* Recent Orders */}
+        <Card className="lg:col-span-1">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base sm:text-lg">সাম্প্রতিক অর্ডার</CardTitle>
+            <Link to="/admin/orders" className="text-xs text-primary hover:underline flex items-center gap-1">
+              সব দেখুন <ArrowRight className="h-3 w-3" />
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+            ) : recentOrders.length === 0 ? (
+              <p className="text-muted-foreground text-sm">কোনো অর্ডার নেই</p>
+            ) : (
+              <div className="space-y-3">
+                {recentOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between gap-2 py-2 border-b last:border-0">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{order.order_number}</p>
+                      <p className="text-xs text-muted-foreground truncate">{order.customer_name}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-sm font-bold text-primary block">৳{order.total_amount}</span>
+                      <Badge variant={statusColors[order.status] || 'secondary'} className="text-[10px]">
+                        {statusLabels[order.status] || order.status}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-sm font-bold text-primary">৳{order.total_amount}</span>
-                    <Badge variant={statusColors[order.status] || 'secondary'} className="text-xs">
-                      {statusLabels[order.status] || order.status}
-                    </Badge>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Top Selling Products */}
+        <Card className="lg:col-span-1">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <Crown className="h-4 w-4 text-secondary" />
+              টপ সেলিং চাল
+            </CardTitle>
+            <Link to="/admin/products" className="text-xs text-primary hover:underline flex items-center gap-1">
+              সব দেখুন <ArrowRight className="h-3 w-3" />
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+            ) : topProducts.length === 0 ? (
+              <p className="text-muted-foreground text-sm">এখনো কোনো বিক্রি হয়নি</p>
+            ) : (
+              <div className="space-y-3">
+                {topProducts.map((product, i) => (
+                  <div key={product.product_name} className="flex items-center gap-3 py-2 border-b last:border-0">
+                    <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shrink-0 ${
+                      i === 0 ? 'bg-secondary/20 text-secondary' :
+                      i === 1 ? 'bg-muted text-muted-foreground' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-sm truncate">{product.product_name}</p>
+                      <p className="text-xs text-muted-foreground">{product.total_qty} বার বিক্রি</p>
+                    </div>
+                    <span className="text-sm font-bold text-primary shrink-0">৳{product.total_revenue.toLocaleString('bn-BD')}</span>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Customers */}
+        <Card className="lg:col-span-1 md:col-span-2 lg:col-span-1">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <UserPlus className="h-4 w-4 text-primary" />
+              নতুন কাস্টমার
+            </CardTitle>
+            <Link to="/admin/customers" className="text-xs text-primary hover:underline flex items-center gap-1">
+              সব দেখুন <ArrowRight className="h-3 w-3" />
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+            ) : recentCustomers.length === 0 ? (
+              <p className="text-muted-foreground text-sm">কোনো কাস্টমার নেই</p>
+            ) : (
+              <div className="space-y-3">
+                {recentCustomers.map((cust) => (
+                  <div key={cust.user_id} className="flex items-center justify-between gap-2 py-2 border-b last:border-0">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{cust.full_name || 'নাম দেওয়া হয়নি'}</p>
+                      <p className="text-xs text-muted-foreground truncate">{cust.phone || '—'}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      {new Date(cust.created_at).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
