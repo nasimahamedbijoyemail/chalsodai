@@ -14,12 +14,14 @@ import {
   Settings,
   Trash2,
   KeyRound,
+  Image,
 } from 'lucide-react';
 
 const adminLinks = [
   { to: '/admin', label: 'ড্যাশবোর্ড', icon: LayoutDashboard },
   { to: '/admin/orders', label: 'অর্ডার', icon: ShoppingBag },
   { to: '/admin/products', label: 'চাল ম্যানেজ', icon: Package },
+  { to: '/admin/promotions', label: 'প্রমোশন ব্যানার', icon: Image },
   { to: '/admin/customers', label: 'কাস্টমার', icon: Users },
   { to: '/admin/faqs', label: 'FAQ ম্যানেজ', icon: HelpCircle },
   { to: '/admin/notifications', label: 'নোটিফিকেশন', icon: Bell },

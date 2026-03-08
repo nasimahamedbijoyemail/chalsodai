@@ -22,24 +22,38 @@ interface Category {
   name: string;
 }
 
+interface Promotion {
+  id: string;
+  title: string;
+  image_url: string;
+  link_url: string;
+}
+
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [prodRes, catRes] = await Promise.all([
+      const [prodRes, catRes, promoRes] = await Promise.all([
         supabase
           .from('rice_products')
           .select('id, name, price, pack_size, description, image_url, rice_categories(name)')
           .eq('is_available', true)
           .limit(4),
         supabase.from('rice_categories').select('id, name').order('name'),
+        supabase
+          .from('promotions')
+          .select('id, title, image_url, link_url')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true }),
       ]);
       
       setProducts(prodRes.data || []);
       setCategories(catRes.data || []);
+      setPromotions(promoRes.data || []);
       setLoading(false);
     };
     fetchData();
@@ -51,11 +65,21 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="overflow-hidden">
-        <img
-          src={heroImage}
-          alt="চাল সদাই হিরো"
-          className="w-full max-h-[420px] object-cover"
-        />
+        {promotions.length > 0 ? (
+          <Link to={promotions[0].link_url} className="block">
+            <img
+              src={promotions[0].image_url}
+              alt={promotions[0].title || 'প্রমোশন'}
+              className="w-full max-h-[420px] object-cover transition-transform hover:scale-[1.01] duration-300"
+            />
+          </Link>
+        ) : (
+          <img
+            src={heroImage}
+            alt="চাল সদাই হিরো"
+            className="w-full max-h-[420px] object-cover"
+          />
+        )}
         <div className="bg-primary py-6 md:py-8">
           <div className="container">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
