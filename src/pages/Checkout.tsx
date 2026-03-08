@@ -9,7 +9,7 @@ import { useCartStore } from '@/lib/cartStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { CheckCircle, Loader2, Banknote, Smartphone, Lock, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Loader2, Banknote, Smartphone, Lock, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import PageTransition from '@/components/PageTransition';
 
@@ -18,7 +18,8 @@ type PaymentMethod = 'bkash' | 'cod';
 const DELIVERY_CHARGE = 60;
 
 const Checkout = () => {
-  const { items, totalPrice, clearCart } = useCartStore();
+  const { items: cartItems, totalPrice: cartTotalPrice, clearCart, updateQuantity: updateCartQuantity, removeItem: removeCartItem } = useCartStore();
+  const { buyNowItems, buyNowTotal, updateBuyNowQuantity, clearBuyNow } = useCartStore();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -32,7 +33,10 @@ const Checkout = () => {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
-  const subtotal = totalPrice();
+  // Determine if this is a direct buy or cart checkout
+  const isBuyNow = buyNowItems.length > 0;
+  const items = isBuyNow ? buyNowItems : cartItems;
+  const subtotal = isBuyNow ? buyNowTotal() : cartTotalPrice();
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
