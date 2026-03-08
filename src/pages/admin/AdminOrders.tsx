@@ -160,7 +160,7 @@ const AdminOrders = () => {
     <div>
       <h1 className="text-2xl font-bold mb-6">অর্ডার ম্যানেজমেন্ট</h1>
 
-      <div className="mb-6">
+      <div className="mb-6 space-y-3">
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -169,6 +169,21 @@ const AdminOrders = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {statusFilters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setActiveFilter(f.value)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                activeFilter === f.value
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
       </div>
 
