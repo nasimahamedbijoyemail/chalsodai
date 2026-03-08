@@ -152,6 +152,12 @@ const Navbar = () => {
                   অ্যাডমিন প্যানেল
                 </Link>
               )}
+              <button
+                onClick={() => { signOut(); setMobileOpen(false); }}
+                className="block py-2 text-sm font-medium text-destructive"
+              >
+                <span className="flex items-center gap-2"><LogOut className="h-4 w-4" />লগআউট</span>
+              </button>
             </>
           )}
         </div>

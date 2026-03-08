@@ -141,6 +141,15 @@ const Profile = () => {
         </Button>
       </form>
 
+      {/* Sign Out */}
+      <Button
+        variant="outline"
+        className="w-full mt-4 gap-2"
+        onClick={async () => { await signOut(); navigate('/'); }}
+      >
+        লগআউট
+      </Button>
+
       {/* Account Deletion Section */}
       <div className="mt-10 pt-8 border-t">
         <h2 className="text-lg font-bold text-destructive mb-2">সেটিংস</h2>
