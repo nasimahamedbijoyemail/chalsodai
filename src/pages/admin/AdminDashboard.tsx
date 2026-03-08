@@ -231,6 +231,42 @@ const AdminDashboard = () => {
               </ResponsiveContainer>
             </CardContent>
           </Card>
+
+          {/* Order Status Pie Chart */}
+          {statusDistribution.length > 0 && (
+            <Card className="md:col-span-2 lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">অর্ডার স্ট্যাটাস</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie
+                      data={statusDistribution}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={85}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                      style={{ fontSize: '11px' }}
+                    >
+                      {statusDistribution.map((_, i) => (
+                        <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number, name: string) => [value, name]}
+                      contentStyle={{ borderRadius: '8px', fontSize: '13px', border: '1px solid hsl(var(--border))' }}
+                    />
+                    <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
 
