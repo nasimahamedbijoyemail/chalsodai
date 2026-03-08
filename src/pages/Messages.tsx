@@ -227,6 +227,7 @@ const Messages = () => {
 
   return (
     <div className="container py-10 max-w-2xl">
+      <PageHead title="মেসেজ" />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">মেসেজ</h1>
         <Button onClick={() => setShowNew(true)} size="sm">
