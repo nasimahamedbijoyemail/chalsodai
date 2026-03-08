@@ -148,7 +148,11 @@ const Checkout = () => {
       }
 
       setSubmitted(true);
-      clearCart();
+      if (isBuyNow) {
+        clearBuyNow();
+      } else {
+        clearCart();
+      }
       toast.success('আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে!');
       if (!user && currentUser) {
         toast.success('আপনার অ্যাকাউন্টও তৈরি হয়েছে!');
