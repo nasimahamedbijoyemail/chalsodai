@@ -27,6 +27,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const addItem = useCartStore((s) => s.addItem);
+  const setBuyNowItem = useCartStore((s) => s.setBuyNowItem);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -79,7 +80,7 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    addItem({
+    setBuyNowItem({
       id: product.id,
       name: product.name,
       price: Number(product.price),

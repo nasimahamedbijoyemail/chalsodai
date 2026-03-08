@@ -9,7 +9,7 @@ import { useCartStore } from '@/lib/cartStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { CheckCircle, Loader2, Banknote, Smartphone, Lock, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Loader2, Banknote, Smartphone, Lock, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import PageTransition from '@/components/PageTransition';
 
@@ -18,7 +18,8 @@ type PaymentMethod = 'bkash' | 'cod';
 const DELIVERY_CHARGE = 60;
 
 const Checkout = () => {
-  const { items, totalPrice, clearCart } = useCartStore();
+  const { items: cartItems, totalPrice: cartTotalPrice, clearCart, updateQuantity: updateCartQuantity, removeItem: removeCartItem } = useCartStore();
+  const { buyNowItems, buyNowTotal, updateBuyNowQuantity, clearBuyNow } = useCartStore();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -32,7 +33,10 @@ const Checkout = () => {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
-  const subtotal = totalPrice();
+  // Determine if this is a direct buy or cart checkout
+  const isBuyNow = buyNowItems.length > 0;
+  const items = isBuyNow ? buyNowItems : cartItems;
+  const subtotal = isBuyNow ? buyNowTotal() : cartTotalPrice();
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
@@ -62,7 +66,7 @@ const Checkout = () => {
   }, [user]);
 
   if (items.length === 0 && !submitted) {
-    navigate('/cart');
+    navigate('/');
     return null;
   }
 
@@ -144,7 +148,11 @@ const Checkout = () => {
       }
 
       setSubmitted(true);
-      clearCart();
+      if (isBuyNow) {
+        clearBuyNow();
+      } else {
+        clearCart();
+      }
       toast.success('আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে!');
       if (!user && currentUser) {
         toast.success('আপনার অ্যাকাউন্টও তৈরি হয়েছে!');
@@ -235,11 +243,51 @@ const Checkout = () => {
           animate={{ opacity: 1, y: 0 }}
         >
           <h2 className="font-bold mb-3">আপনার অর্ডার</h2>
-          <div className="space-y-2 text-sm">
+          <div className="space-y-3 text-sm">
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between">
-                <span className="truncate mr-2">{item.name} × {item.quantity}</span>
-                <span className="shrink-0">৳{item.price * item.quantity}</span>
+              <div key={item.id} className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="h-10 w-10 shrink-0 rounded-lg overflow-hidden bg-muted">
+                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium truncate text-sm">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.packSize} — ৳{item.price}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7"
+                    type="button"
+                    onClick={() => {
+                      if (item.quantity <= 1) {
+                        if (isBuyNow) {
+                          // Don't allow removing last buy-now item
+                          toast.error('কমপক্ষে ১টি পণ্য প্রয়োজন');
+                        } else {
+                          removeCartItem(item.id);
+                        }
+                      } else {
+                        isBuyNow ? updateBuyNowQuantity(item.id, item.quantity - 1) : updateCartQuantity(item.id, item.quantity - 1);
+                      }
+                    }}
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                  <span className="w-6 text-center font-semibold text-sm">{item.quantity}</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7"
+                    type="button"
+                    onClick={() => isBuyNow ? updateBuyNowQuantity(item.id, item.quantity + 1) : updateCartQuantity(item.id, item.quantity + 1)}
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                  <span className="ml-1 font-semibold text-sm shrink-0">৳{item.price * item.quantity}</span>
+                </div>
               </div>
             ))}
             <div className="border-t pt-2 space-y-1">

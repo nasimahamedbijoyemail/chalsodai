@@ -21,6 +21,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore((s) => s.addItem);
+  const setBuyNowItem = useCartStore((s) => s.setBuyNowItem);
   const navigate = useNavigate();
 
   const handleAddToCart = () => {
@@ -35,7 +36,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   const handleBuyNow = () => {
-    addItem({
+    setBuyNowItem({
       id: product.id,
       name: product.name,
       price: product.price,
