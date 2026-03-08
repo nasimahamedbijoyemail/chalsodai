@@ -2,13 +2,19 @@ import { Link } from 'react-router-dom';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/cartStore';
+import PageHead from '@/components/PageHead';
+
+const DELIVERY_CHARGE = 60;
 
 const Cart = () => {
   const { items, removeItem, updateQuantity, totalPrice } = useCartStore();
+  const subtotal = totalPrice();
+  const grandTotal = subtotal + (items.length > 0 ? DELIVERY_CHARGE : 0);
 
   if (items.length === 0) {
     return (
       <div className="container py-20 text-center">
+        <PageHead title="কার্ট" />
         <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground/40 mb-4" />
         <h1 className="text-2xl font-bold mb-2">আপনার কার্ট খালি</h1>
         <p className="text-muted-foreground mb-6">চাল দেখুন এবং কার্টে যোগ করুন</p>
@@ -21,6 +27,7 @@ const Cart = () => {
 
   return (
     <div className="container py-10">
+      <PageHead title="কার্ট" />
       <h1 className="text-3xl font-bold mb-8">আপনার কার্ট</h1>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -28,7 +35,7 @@ const Cart = () => {
           {items.map((item) => (
             <div key={item.id} className="flex gap-4 rounded-xl border bg-card p-4">
               <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
-                <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                <img src={item.image} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold">{item.name}</h3>
@@ -63,9 +70,19 @@ const Cart = () => {
               </div>
             ))}
           </div>
-          <div className="border-t pt-3 flex justify-between font-bold text-lg">
-            <span>মোট</span>
-            <span className="text-primary">৳{totalPrice()}</span>
+          <div className="border-t pt-3 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">সাবটোটাল</span>
+              <span>৳{subtotal}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">ডেলিভারি চার্জ</span>
+              <span>৳{DELIVERY_CHARGE}</span>
+            </div>
+            <div className="border-t pt-2 flex justify-between font-bold text-lg">
+              <span>মোট</span>
+              <span className="text-primary">৳{grandTotal}</span>
+            </div>
           </div>
           <Button asChild className="w-full" size="lg">
             <Link to="/checkout">অর্ডার করুন</Link>

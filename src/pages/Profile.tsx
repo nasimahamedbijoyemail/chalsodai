@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PageHead from '@/components/PageHead';
 
 const Profile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -86,11 +87,11 @@ const Profile = () => {
       });
       if (reqError) throw reqError;
 
-      // Notify admin
+      // Notify admin via broadcast
       await supabase.from('notifications').insert({
         title: 'অ্যাকাউন্ট ডিলিট রিকোয়েস্ট',
         message: `${fullName || 'একজন কাস্টমার'} তাদের অ্যাকাউন্ট ডিলিট করতে চান। কারণ: ${deleteReason || 'উল্লেখ করা হয়নি'}`,
-        is_broadcast: false,
+        is_broadcast: true,
         user_id: null,
       });
 
@@ -115,6 +116,7 @@ const Profile = () => {
 
   return (
     <div className="container py-10 max-w-lg">
+      <PageHead title="আমার প্রোফাইল" />
       <h1 className="text-3xl font-bold mb-8">আমার প্রোফাইল</h1>
 
       <form onSubmit={handleSave} className="space-y-5">

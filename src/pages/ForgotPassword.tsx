@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import PageHead from '@/components/PageHead';
 
 const ForgotPassword = () => {
   const [phoneOrEmail, setPhoneOrEmail] = useState('');
@@ -35,6 +36,7 @@ const ForgotPassword = () => {
   return (
     <div className="container py-16 max-w-md">
       <div className="rounded-xl border bg-card p-8">
+        <PageHead title="পাসওয়ার্ড রিসেট" />
         <h1 className="text-2xl font-bold text-center mb-2">পাসওয়ার্ড ভুলে গেছেন?</h1>
         <p className="text-center text-sm text-muted-foreground mb-6">
           আপনার ফোন নম্বর বা ইমেইল দিন। অ্যাডমিন আপনাকে নতুন পাসওয়ার্ড পাঠাবেন।

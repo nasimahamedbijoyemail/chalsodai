@@ -4,6 +4,7 @@ import { Phone, MessageCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import PageHead from '@/components/PageHead';
 
 const Contact = () => {
   const { user } = useAuth();
@@ -31,6 +32,7 @@ const Contact = () => {
 
   return (
     <div className="container py-10 max-w-2xl">
+      <PageHead title="যোগাযোগ" description="চাল সদাইতে যোগাযোগ করুন — ফোন, হোয়াটসঅ্যাপ, ফেসবুক।" />
       <h1 className="text-3xl font-bold mb-2">যোগাযোগ</h1>
       <p className="text-muted-foreground mb-8">আমাদের সাথে যোগাযোগ করুন</p>
 

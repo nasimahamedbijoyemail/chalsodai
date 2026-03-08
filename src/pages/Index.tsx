@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Shield, Phone, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
+import PageHead from '@/components/PageHead';
 import { supabase } from '@/integrations/supabase/client';
 import heroImage from '@/assets/hero-rice.jpg';
 
@@ -46,6 +47,8 @@ const Index = () => {
 
   return (
     <div>
+      <PageHead title="হোম" description="চাল সদাই — ঢাকা শহরে সেরা মানের চাল সরাসরি আপনার ঘরে। বিকাশে পেমেন্ট, দ্রুত ডেলিভারি।" />
+
       {/* Hero Section */}
       <section className="overflow-hidden">
         <img
@@ -53,19 +56,19 @@ const Index = () => {
           alt="চাল সদাই হিরো"
           className="w-full max-h-[420px] object-cover"
         />
-        <div className="bg-[#1a4a2e] py-6 md:py-8">
+        <div className="bg-primary py-6 md:py-8">
           <div className="container">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="space-y-2">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#f5c842] leading-tight">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary leading-tight">
                   সেরা মানের চাল, সরাসরি আপনার ঘরে
                 </h1>
-                <p className="text-sm md:text-base text-white/80">
+                <p className="text-sm md:text-base text-primary-foreground/80">
                   ঢাকা শহরে দ্রুত ডেলিভারি। বিশ্বস্ত মানের চাল সাশ্রয়ী মূল্যে।
                 </p>
               </div>
               <div className="shrink-0">
-                <Button asChild size="lg" className="text-base bg-[#f5c842] text-[#1a4a2e] hover:bg-[#e0b835] font-bold">
+                <Button asChild size="lg" className="text-base bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold">
                   <Link to="/categories">
                     চাল দেখুন <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>

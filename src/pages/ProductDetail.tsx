@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
+import PageHead from '@/components/PageHead';
 
 interface Product {
   id: string;
@@ -87,6 +88,7 @@ const ProductDetail = () => {
 
   return (
     <div className="container py-10">
+      <PageHead title={product.name} description={product.description || `${product.name} — চাল সদাই`} />
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" /> পেছনে যান
       </Button>
