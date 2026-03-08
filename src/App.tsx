@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
-import { AnimatePresence } from "framer-motion";
+
 import { Suspense, lazy } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
