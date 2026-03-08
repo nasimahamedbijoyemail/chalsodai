@@ -281,7 +281,7 @@ const Checkout = () => {
           </p>
           <div className="rounded-lg bg-background p-4 text-center mb-3">
             <p className="text-xs text-muted-foreground mb-1">বিকাশ নম্বর</p>
-            <p className="text-2xl font-bold text-primary">01786698614</p>
+            <p className="text-2xl font-bold text-primary">{bkashDisplayNumber}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="bkash">বিকাশ ট্রানজেকশন আইডি লিখুন</Label>
