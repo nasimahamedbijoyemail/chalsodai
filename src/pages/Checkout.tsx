@@ -12,10 +12,9 @@ import { toast } from 'sonner';
 import { CheckCircle, Loader2, Banknote, Smartphone, Lock, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import PageTransition from '@/components/PageTransition';
+import { DELIVERY_CHARGE } from '@/lib/constants';
 
 type PaymentMethod = 'bkash' | 'cod';
-
-const DELIVERY_CHARGE = 60;
 
 const Checkout = () => {
   const { items: cartItems, totalPrice: cartTotalPrice, clearCart, updateQuantity: updateCartQuantity, removeItem: removeCartItem } = useCartStore();
