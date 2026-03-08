@@ -86,8 +86,12 @@ const Index = () => {
             { icon: Truck, title: 'দ্রুত ডেলিভারি', desc: 'মাত্র ২৪ ঘণ্টার মধ্যে' },
             { icon: Shield, title: 'মান নিশ্চিত', desc: 'সেরা মানের চাল গ্যারান্টি' },
             { icon: Phone, title: 'সহজ অর্ডার', desc: 'অনলাইনে অর্ডার, বিকাশে পেমেন্ট' },
-          ].map((f) => (
-            <div key={f.title} className="flex items-start gap-4 p-6 rounded-xl bg-background shadow-sm">
+          ].map((f, i) => (
+            <div
+              key={f.title}
+              className="flex items-start gap-4 p-6 rounded-xl bg-background shadow-sm opacity-0 animate-slide-up"
+              style={{ animationDelay: `${i * 150}ms` }}
+            >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                 <f.icon className="h-6 w-6 text-primary" />
               </div>
@@ -132,19 +136,24 @@ const Index = () => {
           </div>
         ) : products.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard
+            {products.map((product, i) => (
+              <div
                 key={product.id}
-                product={{
-                  id: product.id,
-                  name: product.name,
-                  category: product.rice_categories?.name || '',
-                  price: Number(product.price),
-                  packSize: product.pack_size,
-                  description: product.description || '',
-                  image: product.image_url || '/placeholder.svg',
-                }}
-              />
+                className="opacity-0 animate-fade-in"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <ProductCard
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    category: product.rice_categories?.name || '',
+                    price: Number(product.price),
+                    packSize: product.pack_size,
+                    description: product.description || '',
+                    image: product.image_url || '/placeholder.svg',
+                  }}
+                />
+              </div>
             ))}
           </div>
         ) : (
@@ -155,7 +164,7 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-primary text-primary-foreground py-16">
+      <section className="bg-primary text-primary-foreground py-16 animate-fade-in">
         <div className="container text-center space-y-4">
           <h2 className="text-2xl md:text-3xl font-bold">আজই অর্ডার করুন!</h2>
           <p className="text-primary-foreground/80 max-w-lg mx-auto">
