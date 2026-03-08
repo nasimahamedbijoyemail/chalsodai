@@ -19,8 +19,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [adminCheckedFor, setAdminCheckedFor] = useState<string | null>(null);
 
   const checkAdminRole = async (userId: string) => {
+    // Skip if already checked for this user
+    if (adminCheckedFor === userId) return;
     const { data } = await supabase
       .from('user_roles')
       .select('role')
@@ -28,6 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .eq('role', 'admin')
       .maybeSingle();
     setIsAdmin(!!data);
+    setAdminCheckedFor(userId);
   };
 
   useEffect(() => {
@@ -44,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }, 0);
       } else {
         setIsAdmin(false);
+        setAdminCheckedFor(null);
       }
       setLoading(false);
     });
