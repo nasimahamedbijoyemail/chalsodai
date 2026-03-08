@@ -164,7 +164,7 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-primary text-primary-foreground py-16">
+      <section className="bg-primary text-primary-foreground py-16 animate-fade-in">
         <div className="container text-center space-y-4">
           <h2 className="text-2xl md:text-3xl font-bold">আজই অর্ডার করুন!</h2>
           <p className="text-primary-foreground/80 max-w-lg mx-auto">
