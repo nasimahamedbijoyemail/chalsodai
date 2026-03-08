@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/cartStore';
 import PageHead from '@/components/PageHead';
 import PageTransition from '@/components/PageTransition';
-
-const DELIVERY_CHARGE = 60;
+import { DELIVERY_CHARGE } from '@/lib/constants';
 
 const Cart = () => {
   const { items, removeItem, updateQuantity, totalPrice } = useCartStore();
