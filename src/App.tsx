@@ -27,6 +27,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Contact from "./pages/Contact";
 import Messages from "./pages/Messages";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
@@ -85,6 +86,7 @@ const AnimatedRoutes = () => {
       <Route path="/messages" element={<Messages />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/install" element={<Install />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/my-orders" element={<MyOrders />} />

@@ -29,7 +29,7 @@ const Profile = () => {
   const [address, setAddress] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState('');
-  const [deletionRequested, setDeletionRequested] = useState(false);
+  
   const [requesting, setRequesting] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -44,17 +44,12 @@ const Profile = () => {
 
     if (user) {
       const fetchData = async () => {
-        const [profileRes, deletionRes] = await Promise.all([
-          supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
-          supabase.from('account_deletion_requests').select('id').eq('user_id', user.id).eq('status', 'pending').maybeSingle(),
-        ]);
-
-        if (profileRes.data) {
-          setFullName(profileRes.data.full_name || '');
-          setPhone(profileRes.data.phone || '');
-          setAddress(profileRes.data.address || '');
+        const { data } = await supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle();
+        if (data) {
+          setFullName(data.full_name || '');
+          setPhone(data.phone || '');
+          setAddress(data.address || '');
         }
-        setDeletionRequested(!!deletionRes.data);
         setLoading(false);
       };
       fetchData();
@@ -81,25 +76,31 @@ const Profile = () => {
     }
   };
 
-  const handleDeleteRequest = async () => {
+  const handleDeleteAccount = async () => {
     if (!user) return;
     setRequesting(true);
     try {
-      const { error: reqError } = await supabase.from('account_deletion_requests').insert({
-        user_id: user.id,
-        reason: deleteReason || null,
-      });
-      if (reqError) throw reqError;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
 
-      // Notification is now handled by admin-only broadcast policy
-      // The admin will see the deletion request in the admin panel
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/self-delete-account`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+        }
+      );
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to delete');
 
-      toast.success('অ্যাকাউন্ট ডিলিট রিকোয়েস্ট পাঠানো হয়েছে।');
-      setDeletionRequested(true);
-      setDeleteDialogOpen(false);
-      setDeleteReason('');
+      toast.success('আপনার অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে।');
+      await signOut();
+      navigate('/');
     } catch {
-      toast.error('রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে');
+      toast.error('অ্যাকাউন্ট মুছতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     } finally {
       setRequesting(false);
     }
@@ -209,41 +210,33 @@ const Profile = () => {
         {/* Account Deletion */}
         <div className="mt-6 pt-6 border-t">
           <h2 className="text-base sm:text-lg font-bold text-destructive mb-3">বিপদ জোন</h2>
-          {deletionRequested ? (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" size="sm" className="gap-2">
+                <Trash2 className="h-4 w-4" />
+                অ্যাকাউন্ট ডিলিট করুন
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>অ্যাকাউন্ট ডিলিট করুন</DialogTitle>
+              </DialogHeader>
               <p className="text-sm text-muted-foreground">
-                আপনার অ্যাকাউন্ট ডিলিট রিকোয়েস্ট পাঠানো হয়েছে। অ্যাডমিন শীঘ্রই ব্যবস্থা নেবেন।
+                ⚠️ এই কাজটি অপরিবর্তনীয়! আপনার অ্যাকাউন্ট, প্রোফাইল, এবং সকল ডেটা স্থায়ীভাবে মুছে ফেলা হবে। আপনার অর্ডার ইতিহাস রেকর্ড হিসেবে থাকবে।
               </p>
-            </div>
-          ) : (
-            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="destructive" size="sm" className="gap-2">
-                  <Trash2 className="h-4 w-4" />
-                  অ্যাকাউন্ট ডিলিট করুন
+              <div className="space-y-2">
+                <Label>কারণ (ঐচ্ছিক)</Label>
+                <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} placeholder="কেন ডিলিট করতে চান..." rows={3} maxLength={500} />
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>বাতিল</Button>
+                <Button variant="destructive" onClick={handleDeleteAccount} disabled={requesting}>
+                  {requesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  স্থায়ীভাবে ডিলিট করুন
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>অ্যাকাউন্ট ডিলিট রিকোয়েস্ট</DialogTitle>
-                </DialogHeader>
-                <p className="text-sm text-muted-foreground">
-                  আপনার অ্যাকাউন্ট ডিলিট করার রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হবে।
-                </p>
-                <div className="space-y-2">
-                  <Label>কারণ (ঐচ্ছিক)</Label>
-                  <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} placeholder="কেন ডিলিট করতে চান..." rows={3} maxLength={500} />
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>বাতিল</Button>
-                  <Button variant="destructive" onClick={handleDeleteRequest} disabled={requesting}>
-                    {requesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    রিকোয়েস্ট পাঠান
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </PageTransition>
