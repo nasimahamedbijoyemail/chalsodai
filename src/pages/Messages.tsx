@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, Send, Plus, ArrowLeft, MessageCircle } from 'lucide-react';
+import PageHead from '@/components/PageHead';
 
 interface Conversation {
   id: string;
