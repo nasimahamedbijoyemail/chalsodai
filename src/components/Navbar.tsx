@@ -140,6 +140,9 @@ const Navbar = () => {
               <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-muted-foreground">
                 আমার অর্ডার
               </Link>
+              <Link to="/messages" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-muted-foreground">
+                মেসেজ
+              </Link>
               {isAdmin && (
                 <Link to="/admin" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-primary">
                   অ্যাডমিন প্যানেল
