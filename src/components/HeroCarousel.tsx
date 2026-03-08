@@ -43,6 +43,8 @@ const HeroCarousel = ({ promotions, fallbackImage }: HeroCarouselProps) => {
       <img
         src={fallbackImage}
         alt="চাল সদাই হিরো"
+        width={1200}
+        height={420}
         className="w-full max-h-[420px] object-cover"
       />
     );
