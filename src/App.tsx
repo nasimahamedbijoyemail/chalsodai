@@ -73,41 +73,39 @@ const BackButtonHandler = () => {
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/my-orders" element={<MyOrders />} />
-        <Route path="/order/:id" element={<OrderDetail />} />
-        <Route path="/admin" element={
-          <Suspense fallback={<PageSkeleton />}>
-            <AdminLayout />
-          </Suspense>
-        }>
-          <Route index element={<Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense>} />
-          <Route path="orders" element={<Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense>} />
-          <Route path="products" element={<Suspense fallback={<PageSkeleton />}><AdminProducts /></Suspense>} />
-          <Route path="customers" element={<Suspense fallback={<PageSkeleton />}><AdminCustomers /></Suspense>} />
-          <Route path="faqs" element={<Suspense fallback={<PageSkeleton />}><AdminFAQs /></Suspense>} />
-          <Route path="notifications" element={<Suspense fallback={<PageSkeleton />}><AdminNotifications /></Suspense>} />
-          <Route path="messages" element={<Suspense fallback={<PageSkeleton />}><AdminMessages /></Suspense>} />
-          <Route path="deletion-requests" element={<Suspense fallback={<PageSkeleton />}><AdminDeletionRequests /></Suspense>} />
-          <Route path="settings" element={<Suspense fallback={<PageSkeleton />}><AdminSettings /></Suspense>} />
-          <Route path="password-resets" element={<Suspense fallback={<PageSkeleton />}><AdminPasswordResets /></Suspense>} />
-          <Route path="promotions" element={<Suspense fallback={<PageSkeleton />}><AdminPromotions /></Suspense>} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <Routes location={location} key={location.pathname}>
+      <Route path="/" element={<Index />} />
+      <Route path="/categories" element={<Categories />} />
+      <Route path="/product/:id" element={<ProductDetail />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/my-orders" element={<MyOrders />} />
+      <Route path="/order/:id" element={<OrderDetail />} />
+      <Route path="/admin" element={
+        <Suspense fallback={<PageSkeleton />}>
+          <AdminLayout />
+        </Suspense>
+      }>
+        <Route index element={<Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense>} />
+        <Route path="orders" element={<Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense>} />
+        <Route path="products" element={<Suspense fallback={<PageSkeleton />}><AdminProducts /></Suspense>} />
+        <Route path="customers" element={<Suspense fallback={<PageSkeleton />}><AdminCustomers /></Suspense>} />
+        <Route path="faqs" element={<Suspense fallback={<PageSkeleton />}><AdminFAQs /></Suspense>} />
+        <Route path="notifications" element={<Suspense fallback={<PageSkeleton />}><AdminNotifications /></Suspense>} />
+        <Route path="messages" element={<Suspense fallback={<PageSkeleton />}><AdminMessages /></Suspense>} />
+        <Route path="deletion-requests" element={<Suspense fallback={<PageSkeleton />}><AdminDeletionRequests /></Suspense>} />
+        <Route path="settings" element={<Suspense fallback={<PageSkeleton />}><AdminSettings /></Suspense>} />
+        <Route path="password-resets" element={<Suspense fallback={<PageSkeleton />}><AdminPasswordResets /></Suspense>} />
+        <Route path="promotions" element={<Suspense fallback={<PageSkeleton />}><AdminPromotions /></Suspense>} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
