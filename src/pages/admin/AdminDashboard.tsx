@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Package, ShoppingBag, Users, TrendingUp, Clock, Crown, UserPlus, ArrowRight } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend } from 'recharts';
 
 interface Stats {
   customers: number;
@@ -140,6 +140,26 @@ const AdminDashboard = () => {
     return Array.from(map.values());
   }, [allOrders]);
 
+  const statusDistribution = useMemo(() => {
+    const countMap = new Map<string, number>();
+    allOrders.forEach((o) => {
+      countMap.set(o.status, (countMap.get(o.status) || 0) + 1);
+    });
+    return Array.from(countMap.entries()).map(([status, count]) => ({
+      name: statusLabels[status] || status,
+      value: count,
+    }));
+  }, [allOrders]);
+
+  const PIE_COLORS = [
+    'hsl(38, 60%, 55%)',   // secondary/gold
+    'hsl(145, 45%, 28%)',  // primary/green
+    'hsl(220, 60%, 55%)',  // blue
+    'hsl(25, 50%, 40%)',   // accent/earth
+    'hsl(0, 84%, 60%)',    // destructive
+    'hsl(270, 50%, 55%)',  // violet
+  ];
+
   const statCards = [
     { title: 'মোট রেভেনিউ', value: `৳${stats.totalRevenue.toLocaleString('bn-BD')}`, icon: TrendingUp, color: 'text-emerald-600' },
     { title: 'পেন্ডিং অর্ডার', value: stats.pendingOrders, icon: Clock, color: 'text-orange-600' },
@@ -211,6 +231,42 @@ const AdminDashboard = () => {
               </ResponsiveContainer>
             </CardContent>
           </Card>
+
+          {/* Order Status Pie Chart */}
+          {statusDistribution.length > 0 && (
+            <Card className="md:col-span-2 lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">অর্ডার স্ট্যাটাস</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie
+                      data={statusDistribution}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={85}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                      style={{ fontSize: '11px' }}
+                    >
+                      {statusDistribution.map((_, i) => (
+                        <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number, name: string) => [value, name]}
+                      contentStyle={{ borderRadius: '8px', fontSize: '13px', border: '1px solid hsl(var(--border))' }}
+                    />
+                    <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
 
