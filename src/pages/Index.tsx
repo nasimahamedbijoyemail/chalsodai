@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Truck, Shield, Phone } from 'lucide-react';
+import { ArrowRight, Truck, Shield, Phone, Star, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
