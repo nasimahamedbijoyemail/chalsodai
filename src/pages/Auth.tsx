@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
+import PageTransition from '@/components/PageTransition';
 
 type AuthMethod = 'email' | 'phone';
 
@@ -73,7 +76,7 @@ const Auth = () => {
           navigate('/');
         }
       }
-    } catch (err) {
+    } catch {
       toast.error('কিছু একটা সমস্যা হয়েছে');
     } finally {
       setLoading(false);
@@ -81,124 +84,138 @@ const Auth = () => {
   };
 
   return (
-    <div className="container py-16 max-w-md">
-      <PageHead title={isLogin ? 'লগইন' : 'রেজিস্টার'} />
-      <div className="rounded-xl border bg-card p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          {isLogin ? 'চাল সদাইতে লগইন করুন' : 'অ্যাকাউন্ট তৈরি করুন'}
-        </h1>
-
-        {/* Auth method toggle */}
-        <div className="flex rounded-lg border bg-muted p-1 mb-6">
-          <button
-            type="button"
-            onClick={() => setAuthMethod('phone')}
-            className={`flex-1 rounded-md py-2 text-sm font-medium transition-all ${
-              authMethod === 'phone' ? 'bg-background shadow text-foreground' : 'text-muted-foreground'
-            }`}
-          >
-            ফোন নম্বর
-          </button>
-          <button
-            type="button"
-            onClick={() => setAuthMethod('email')}
-            className={`flex-1 rounded-md py-2 text-sm font-medium transition-all ${
-              authMethod === 'email' ? 'bg-background shadow text-foreground' : 'text-muted-foreground'
-            }`}
-          >
-            ইমেইল
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="fullName">আপনার নাম</Label>
-              <Input
-                id="fullName"
-                placeholder="পুরো নাম"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                maxLength={100}
-              />
-            </div>
-          )}
-
-          {authMethod === 'phone' ? (
-            <div className="space-y-2">
-              <Label htmlFor="phone">ফোন নম্বর</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="01XXXXXXXXX"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                maxLength={15}
-              />
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <Label htmlFor="email">ইমেইল</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                maxLength={255}
-              />
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="password">পাসওয়ার্ড</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength={6}
-            />
+    <PageTransition>
+      <div className="container py-10 sm:py-16 pb-24 md:pb-16 max-w-md">
+        <PageHead title={isLogin ? 'লগইন' : 'রেজিস্টার'} />
+        <motion.div
+          className="rounded-2xl border bg-card p-6 sm:p-8 premium-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="text-center mb-6">
+            <span className="text-3xl mb-2 block">🌾</span>
+            <h1 className="text-xl sm:text-2xl font-bold">
+              {isLogin ? 'চাল সদাইতে লগইন করুন' : 'অ্যাকাউন্ট তৈরি করুন'}
+            </h1>
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'অপেক্ষা করুন...' : isLogin ? 'লগইন' : 'রেজিস্টার'}
-          </Button>
-        </form>
 
-        <div className="mt-6 text-center text-sm">
-          {isLogin ? (
-            <p>
-              অ্যাকাউন্ট নেই?{' '}
-              <button onClick={() => setIsLogin(false)} className="text-primary font-medium hover:underline">
-                রেজিস্টার করুন
-              </button>
-            </p>
-          ) : (
-            <p>
-              আগে থেকে অ্যাকাউন্ট আছে?{' '}
-              <button onClick={() => setIsLogin(true)} className="text-primary font-medium hover:underline">
-                লগইন করুন
-              </button>
-            </p>
+          {/* Auth method toggle */}
+          <div className="flex rounded-lg border bg-muted p-1 mb-6">
+            <button
+              type="button"
+              onClick={() => setAuthMethod('phone')}
+              className={`flex-1 rounded-md py-2 text-sm font-medium transition-all ${
+                authMethod === 'phone' ? 'bg-background shadow text-foreground' : 'text-muted-foreground'
+              }`}
+            >
+              ফোন নম্বর
+            </button>
+            <button
+              type="button"
+              onClick={() => setAuthMethod('email')}
+              className={`flex-1 rounded-md py-2 text-sm font-medium transition-all ${
+                authMethod === 'email' ? 'bg-background shadow text-foreground' : 'text-muted-foreground'
+              }`}
+            >
+              ইমেইল
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="fullName">আপনার নাম</Label>
+                <Input
+                  id="fullName"
+                  placeholder="পুরো নাম"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  maxLength={100}
+                />
+              </div>
+            )}
+
+            {authMethod === 'phone' ? (
+              <div className="space-y-2">
+                <Label htmlFor="phone">ফোন নম্বর</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="01XXXXXXXXX"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  maxLength={15}
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="email">ইমেইল</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  maxLength={255}
+                />
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="password">পাসওয়ার্ড</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+              />
+            </div>
+            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              {loading ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> অপেক্ষা করুন...</>
+              ) : (
+                isLogin ? 'লগইন' : 'রেজিস্টার'
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center text-sm">
+            {isLogin ? (
+              <p>
+                অ্যাকাউন্ট নেই?{' '}
+                <button onClick={() => setIsLogin(false)} className="text-primary font-medium hover:underline">
+                  রেজিস্টার করুন
+                </button>
+              </p>
+            ) : (
+              <p>
+                আগে থেকে অ্যাকাউন্ট আছে?{' '}
+                <button onClick={() => setIsLogin(true)} className="text-primary font-medium hover:underline">
+                  লগইন করুন
+                </button>
+              </p>
+            )}
+          </div>
+
+          {isLogin && (
+            <div className="mt-4 text-center">
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                পাসওয়ার্ড ভুলে গেছেন?
+              </Link>
+            </div>
           )}
-        </div>
 
-        {isLogin && (
           <div className="mt-4 text-center">
-            <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-              পাসওয়ার্ড ভুলে গেছেন?
+            <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              ← হোমে ফিরুন
             </Link>
           </div>
-        )}
-
-        <div className="mt-4 text-center">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
-            ← হোমে ফিরুন
-          </Link>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 
