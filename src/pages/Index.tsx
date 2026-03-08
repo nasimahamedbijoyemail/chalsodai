@@ -66,21 +66,7 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="overflow-hidden">
-        {promotions.length > 0 ? (
-          <Link to={promotions[0].link_url} className="block">
-            <img
-              src={promotions[0].image_url}
-              alt={promotions[0].title || 'প্রমোশন'}
-              className="w-full max-h-[420px] object-cover transition-transform hover:scale-[1.01] duration-300"
-            />
-          </Link>
-        ) : (
-          <img
-            src={heroImage}
-            alt="চাল সদাই হিরো"
-            className="w-full max-h-[420px] object-cover"
-          />
-        )}
+        <HeroCarousel promotions={promotions} fallbackImage={heroImage} />
         <div className="bg-primary py-6 md:py-8">
           <div className="container">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
