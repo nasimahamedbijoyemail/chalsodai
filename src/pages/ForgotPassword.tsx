@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import PageHead from '@/components/PageHead';
 
 const ForgotPassword = () => {
   const [phoneOrEmail, setPhoneOrEmail] = useState('');
