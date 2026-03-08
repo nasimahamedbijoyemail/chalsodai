@@ -108,7 +108,7 @@ const Index = () => {
 
       {/* Features */}
       <section className="bg-section-warm py-12">
-        <div className="container grid gap-6 md:grid-cols-3">
+        <div className="container grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
           {[
             { icon: Truck, title: 'দ্রুত ডেলিভারি', desc: 'মাত্র ২৪ ঘণ্টার মধ্যে' },
             { icon: Shield, title: 'মান নিশ্চিত', desc: 'সেরা মানের চাল গ্যারান্টি' },
