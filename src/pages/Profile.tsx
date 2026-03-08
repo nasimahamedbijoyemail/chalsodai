@@ -91,12 +91,8 @@ const Profile = () => {
       });
       if (reqError) throw reqError;
 
-      await supabase.from('notifications').insert({
-        title: 'অ্যাকাউন্ট ডিলিট রিকোয়েস্ট',
-        message: `${fullName || 'একজন কাস্টমার'} তাদের অ্যাকাউন্ট ডিলিট করতে চান। কারণ: ${deleteReason || 'উল্লেখ করা হয়নি'}`,
-        is_broadcast: true,
-        user_id: null,
-      });
+      // Notification is now handled by admin-only broadcast policy
+      // The admin will see the deletion request in the admin panel
 
       toast.success('অ্যাকাউন্ট ডিলিট রিকোয়েস্ট পাঠানো হয়েছে।');
       setDeletionRequested(true);
