@@ -74,6 +74,8 @@ const HeroCarousel = ({ promotions, fallbackImage }: HeroCarouselProps) => {
                 <img
                   src={promo.image_url}
                   alt={promo.title || 'প্রমোশন'}
+                  width={1200}
+                  height={420}
                   className="w-full max-h-[420px] object-cover"
                 />
               </Link>

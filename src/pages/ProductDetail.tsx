@@ -105,7 +105,7 @@ const ProductDetail = () => {
             transition={{ duration: 0.4 }}
           >
             <div className="aspect-square overflow-hidden rounded-2xl bg-muted group cursor-zoom-in premium-card">
-              <img src={selectedImage} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-125" />
+              <img src={selectedImage} alt={product.name} width={600} height={600} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-125" />
             </div>
             {allImages.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1">
