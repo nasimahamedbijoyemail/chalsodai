@@ -181,7 +181,7 @@ const Messages = () => {
 
   if (selectedConv) {
     return (
-      <div className="container py-6 max-w-2xl flex flex-col" style={{ height: 'calc(100vh - 5rem)' }}>
+      <div className="container py-6 pb-24 md:pb-6 max-w-2xl flex flex-col" style={{ height: 'calc(100vh - 5rem)' }}>
         <Button variant="ghost" onClick={() => setSelectedConv(null)} className="mb-2 self-start">
           <ArrowLeft className="h-4 w-4 mr-2" /> কথোপকথন তালিকা
         </Button>
@@ -228,7 +228,7 @@ const Messages = () => {
   }
 
   return (
-    <div className="container py-10 max-w-2xl">
+    <div className="container py-10 pb-24 md:pb-10 max-w-2xl">
       <PageHead title="মেসেজ" />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">মেসেজ</h1>
