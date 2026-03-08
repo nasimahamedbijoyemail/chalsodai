@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PageHead from '@/components/PageHead';
 
 const Profile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
