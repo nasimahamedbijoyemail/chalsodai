@@ -355,14 +355,42 @@ const Checkout = () => {
         {/* COD Info */}
         {paymentMethod === 'cod' && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="rounded-xl border-2 border-secondary bg-secondary/10 p-4 sm:p-5 mb-6"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className="rounded-2xl border border-secondary/30 bg-gradient-to-br from-secondary/10 via-background to-accent/5 p-5 sm:p-6 mb-6 shadow-sm"
           >
-            <h2 className="font-bold text-base sm:text-lg mb-2">💵 ক্যাশ অন ডেলিভারি</h2>
-            <p className="text-xs sm:text-sm">
-              ডেলিভারি ম্যান আপনার পণ্য পৌঁছে দেওয়ার সময় <strong className="text-primary">৳{grandTotal}</strong> টাকা নগদে পরিশোধ করুন।
-            </p>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-secondary/20">
+                <Banknote className="h-5 w-5 text-secondary-foreground" />
+              </div>
+              <div>
+                <h2 className="font-bold text-base sm:text-lg leading-tight">ক্যাশ অন ডেলিভারি</h2>
+                <p className="text-[11px] sm:text-xs text-muted-foreground">পণ্য হাতে পেয়ে পেমেন্ট করুন</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-4">
+              <div className="flex items-start gap-3">
+                <span className="flex items-center justify-center h-6 w-6 rounded-full bg-secondary text-secondary-foreground text-xs font-bold shrink-0 mt-0.5">১</span>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  অর্ডার কনফার্ম করুন — আমরা আপনার ঠিকানায় পণ্য পাঠিয়ে দেব
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex items-center justify-center h-6 w-6 rounded-full bg-secondary text-secondary-foreground text-xs font-bold shrink-0 mt-0.5">২</span>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  ডেলিভারি ম্যানের কাছ থেকে পণ্য বুঝে নিয়ে টাকা পরিশোধ করুন
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-background border border-border p-4 text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-accent/5 pointer-events-none" />
+              <p className="text-[11px] text-muted-foreground mb-1.5 uppercase tracking-wider font-medium relative z-10">মোট পরিশোধযোগ্য</p>
+              <p className="text-2xl sm:text-3xl font-bold text-primary tracking-wide relative z-10">৳{grandTotal}</p>
+              <p className="text-[11px] text-muted-foreground mt-1.5 relative z-10">ডেলিভারির সময় নগদে পরিশোধ করুন</p>
+            </div>
           </motion.div>
         )}
 
