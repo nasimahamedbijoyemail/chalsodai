@@ -162,6 +162,9 @@ const ProductDetail = () => {
             )}
           </motion.div>
         </div>
+
+        {/* Reviews Section */}
+        <ProductReviews productId={product.id} />
       </div>
     </PageTransition>
   );
