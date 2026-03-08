@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Shield, Phone, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
+import ProductCardSkeleton from '@/components/ProductCardSkeleton';
 import PageHead from '@/components/PageHead';
 import HeroCarousel from '@/components/HeroCarousel';
 import { supabase } from '@/integrations/supabase/client';
