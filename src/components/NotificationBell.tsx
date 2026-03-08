@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import { Bell, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +22,7 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [open, setOpen] = useState(false);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -38,7 +39,6 @@ const NotificationBell = () => {
       setUnreadCount(data.filter((n) => !n.is_read).length);
     }
 
-    // Check unread messages
     const { data: convData } = await supabase
       .from('chat_conversations')
       .select('id')
@@ -59,7 +59,6 @@ const NotificationBell = () => {
   useEffect(() => {
     fetchNotifications();
 
-    // Listen for new notifications
     if (!user) return;
     const channel = supabase
       .channel('user-notifications')
@@ -101,16 +100,19 @@ const NotificationBell = () => {
   const totalUnread = unreadCount + unreadMessages;
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <button
+          className="relative inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="নোটিফিকেশন"
+        >
           <Bell className="h-5 w-5" />
           {totalUnread > 0 && (
             <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground">
               {totalUnread}
             </span>
           )}
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between border-b p-3">
