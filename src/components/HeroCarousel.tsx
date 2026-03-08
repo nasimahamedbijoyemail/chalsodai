@@ -43,6 +43,8 @@ const HeroCarousel = ({ promotions, fallbackImage }: HeroCarouselProps) => {
       <img
         src={fallbackImage}
         alt="চাল সদাই হিরো"
+        width={1200}
+        height={420}
         className="w-full max-h-[420px] object-cover"
       />
     );
@@ -54,6 +56,8 @@ const HeroCarousel = ({ promotions, fallbackImage }: HeroCarouselProps) => {
         <img
           src={promotions[0].image_url}
           alt={promotions[0].title || 'প্রমোশন'}
+          width={1200}
+          height={420}
           className="w-full max-h-[420px] object-cover transition-transform hover:scale-[1.01] duration-300"
         />
       </Link>
@@ -70,6 +74,8 @@ const HeroCarousel = ({ promotions, fallbackImage }: HeroCarouselProps) => {
                 <img
                   src={promo.image_url}
                   alt={promo.title || 'প্রমোশন'}
+                  width={1200}
+                  height={420}
                   className="w-full max-h-[420px] object-cover"
                 />
               </Link>

@@ -27,11 +27,16 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
 
   const subtotal = totalPrice();
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
+    // Fetch WhatsApp number from settings
+    supabase.from('site_settings').select('value').eq('key', 'whatsapp_number').maybeSingle()
+      .then(({ data }) => { if (data?.value) setWhatsappNumber(data.value.replace(/[^0-9]/g, '')); });
+
     if (user) {
       const fetchProfile = async () => {
         const { data } = await supabase
@@ -155,9 +160,11 @@ const Checkout = () => {
         items.map(i => `• ${i.name} × ${i.quantity} = ৳${i.price * i.quantity}`).join('\n')
       );
       // Open WhatsApp after a short delay
-      setTimeout(() => {
-        window.open(`https://wa.me/8801341180374?text=${whatsappMsg}`, '_blank');
-      }, 1500);
+      if (whatsappNumber) {
+        setTimeout(() => {
+          window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
+        }, 1500);
+      }
     } catch (error) {
       console.error('Order error:', error);
       toast.error('অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
