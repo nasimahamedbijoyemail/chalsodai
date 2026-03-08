@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHead from '@/components/PageHead';
+import PageTransition from '@/components/PageTransition';
 
 interface Order {
   id: string;
@@ -61,53 +63,63 @@ const MyOrders = () => {
 
   if (orders.length === 0) {
     return (
-      <div className="container py-20 text-center">
-        <PageHead title="আমার অর্ডার" />
-        <Package className="mx-auto h-16 w-16 text-muted-foreground/40 mb-4" />
-        <h1 className="text-2xl font-bold mb-2">কোনো অর্ডার নেই</h1>
-        <p className="text-muted-foreground mb-6">আপনি এখনো কোনো অর্ডার করেননি</p>
-        <Button asChild>
-          <Link to="/categories">চাল দেখুন</Link>
-        </Button>
-      </div>
+      <PageTransition>
+        <div className="container py-20 text-center">
+          <PageHead title="আমার অর্ডার" />
+          <Package className="mx-auto h-16 w-16 text-muted-foreground/40 mb-4" />
+          <h1 className="text-2xl font-bold mb-2">কোনো অর্ডার নেই</h1>
+          <p className="text-muted-foreground mb-6">আপনি এখনো কোনো অর্ডার করেননি</p>
+          <Button asChild>
+            <Link to="/categories">চাল দেখুন</Link>
+          </Button>
+        </div>
+      </PageTransition>
     );
   }
 
   return (
-    <div className="container py-10">
-      <PageHead title="আমার অর্ডার" />
-      <h1 className="text-3xl font-bold mb-8">আমার অর্ডার</h1>
+    <PageTransition>
+      <div className="container py-10 pb-24 md:pb-10">
+        <PageHead title="আমার অর্ডার" />
+        <h1 className="text-3xl font-bold mb-8">আমার অর্ডার</h1>
 
-      <div className="space-y-4">
-        {orders.map((order) => {
-          const status = statusLabels[order.status] || statusLabels.pending;
-          return (
-            <Link
-              key={order.id}
-              to={`/order/${order.id}`}
-              className="block rounded-xl border bg-card p-5 hover:shadow-md transition-shadow"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="font-bold">{order.order_number}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(order.created_at).toLocaleDateString('bn-BD', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-primary">৳{order.total_amount}</p>
-                  <Badge variant={status.variant}>{status.label}</Badge>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+        <div className="space-y-4">
+          {orders.map((order, i) => {
+            const status = statusLabels[order.status] || statusLabels.pending;
+            return (
+              <motion.div
+                key={order.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08, duration: 0.3 }}
+              >
+                <Link
+                  to={`/order/${order.id}`}
+                  className="block rounded-xl border bg-card p-5 premium-card"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="font-bold">{order.order_number}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(order.created_at).toLocaleDateString('bn-BD', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-primary">৳{order.total_amount}</p>
+                      <Badge variant={status.variant}>{status.label}</Badge>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 
