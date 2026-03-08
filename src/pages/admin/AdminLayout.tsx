@@ -10,6 +10,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   LayoutDashboard,
   Package,
@@ -24,21 +25,71 @@ import {
   KeyRound,
   Image,
   Menu,
+  Wheat,
+  ChevronRight,
+  Home,
 } from 'lucide-react';
 
 const adminLinks = [
-  { to: '/admin', label: 'ড্যাশবোর্ড', icon: LayoutDashboard },
-  { to: '/admin/orders', label: 'অর্ডার', icon: ShoppingBag },
-  { to: '/admin/products', label: 'চাল ম্যানেজ', icon: Package },
-  { to: '/admin/promotions', label: 'প্রমোশন ব্যানার', icon: Image },
-  { to: '/admin/customers', label: 'কাস্টমার', icon: Users },
-  { to: '/admin/faqs', label: 'FAQ ম্যানেজ', icon: HelpCircle },
-  { to: '/admin/notifications', label: 'নোটিফিকেশন', icon: Bell },
-  { to: '/admin/messages', label: 'মেসেজ', icon: MessageCircle },
-  { to: '/admin/deletion-requests', label: 'ডিলিট রিকোয়েস্ট', icon: Trash2 },
-  { to: '/admin/password-resets', label: 'পাসওয়ার্ড রিসেট', icon: KeyRound },
-  { to: '/admin/settings', label: 'সেটিংস', icon: Settings },
+  { to: '/admin', label: 'ড্যাশবোর্ড', icon: LayoutDashboard, group: 'main' },
+  { to: '/admin/orders', label: 'অর্ডার', icon: ShoppingBag, group: 'main' },
+  { to: '/admin/products', label: 'চাল ম্যানেজ', icon: Package, group: 'main' },
+  { to: '/admin/promotions', label: 'প্রমোশন ব্যানার', icon: Image, group: 'main' },
+  { to: '/admin/customers', label: 'কাস্টমার', icon: Users, group: 'main' },
+  { to: '/admin/faqs', label: 'FAQ ম্যানেজ', icon: HelpCircle, group: 'tools' },
+  { to: '/admin/notifications', label: 'নোটিফিকেশন', icon: Bell, group: 'tools' },
+  { to: '/admin/messages', label: 'মেসেজ', icon: MessageCircle, group: 'tools' },
+  { to: '/admin/deletion-requests', label: 'ডিলিট রিকোয়েস্ট', icon: Trash2, group: 'tools' },
+  { to: '/admin/password-resets', label: 'পাসওয়ার্ড রিসেট', icon: KeyRound, group: 'tools' },
+  { to: '/admin/settings', label: 'সেটিংস', icon: Settings, group: 'settings' },
 ];
+
+const NavItem = ({ link, isActive, onClick }: { link: typeof adminLinks[0]; isActive: boolean; onClick?: () => void }) => (
+  <Link
+    to={link.to}
+    onClick={onClick}
+    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 group ${
+      isActive
+        ? 'bg-primary/10 text-primary shadow-sm'
+        : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+    }`}
+  >
+    <link.icon className={`h-4 w-4 shrink-0 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+    <span className="flex-1">{link.label}</span>
+    {isActive && <ChevronRight className="h-3.5 w-3.5 text-primary/60" />}
+  </Link>
+);
+
+const SidebarNav = ({ onLinkClick }: { onLinkClick?: () => void }) => {
+  const location = useLocation();
+  const mainLinks = adminLinks.filter(l => l.group === 'main');
+  const toolLinks = adminLinks.filter(l => l.group === 'tools');
+  const settingsLinks = adminLinks.filter(l => l.group === 'settings');
+
+  return (
+    <nav className="space-y-4">
+      <div className="space-y-0.5">
+        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 mb-1.5">প্রধান</p>
+        {mainLinks.map(link => (
+          <NavItem key={link.to} link={link} isActive={location.pathname === link.to} onClick={onLinkClick} />
+        ))}
+      </div>
+      <Separator className="opacity-50" />
+      <div className="space-y-0.5">
+        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 mb-1.5">টুলস</p>
+        {toolLinks.map(link => (
+          <NavItem key={link.to} link={link} isActive={location.pathname === link.to} onClick={onLinkClick} />
+        ))}
+      </div>
+      <Separator className="opacity-50" />
+      <div className="space-y-0.5">
+        {settingsLinks.map(link => (
+          <NavItem key={link.to} link={link} isActive={location.pathname === link.to} onClick={onLinkClick} />
+        ))}
+      </div>
+    </nav>
+  );
+};
 
 const AdminLayout = () => {
   const { isAdmin, loading } = useAuth();
@@ -49,15 +100,13 @@ const AdminLayout = () => {
   const activeLabel = adminLinks.find((l) => l.to === location.pathname)?.label || 'অ্যাডমিন';
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      navigate('/');
-    }
+    if (!loading && !isAdmin) navigate('/');
   }, [isAdmin, loading, navigate]);
 
   if (loading) {
     return (
-      <div className="container py-20 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -65,72 +114,72 @@ const AdminLayout = () => {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen">
-      <div className="container py-6">
+    <div className="min-h-screen bg-background">
+      <div className="container py-4 sm:py-6">
         <div className="flex gap-6">
           {/* Desktop Sidebar */}
-          <aside className="hidden md:block w-64 shrink-0">
-            <div className="sticky top-20 rounded-xl border bg-card p-4">
-              <div className="flex items-center justify-between mb-4 px-3">
-                <h2 className="font-bold text-lg">অ্যাডমিন প্যানেল</h2>
-                <AdminNotificationBell />
+          <aside className="hidden md:block w-60 lg:w-64 shrink-0">
+            <div className="sticky top-20 rounded-xl border bg-card/80 backdrop-blur-sm overflow-hidden">
+              {/* Sidebar Header */}
+              <div className="p-4 border-b bg-gradient-to-r from-primary/5 to-transparent">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                      <Wheat className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="font-bold text-sm">অ্যাডমিন প্যানেল</h2>
+                      <p className="text-[10px] text-muted-foreground">চালসদাই ম্যানেজমেন্ট</p>
+                    </div>
+                  </div>
+                  <AdminNotificationBell />
+                </div>
               </div>
-              <nav className="space-y-1">
-                {adminLinks.map((link) => {
-                  const isActive = location.pathname === link.to;
-                  return (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                      }`}
-                    >
-                      <link.icon className="h-4 w-4" />
-                      {link.label}
-                    </Link>
-                  );
-                })}
-              </nav>
+
+              {/* Nav Links */}
+              <div className="p-3">
+                <SidebarNav />
+              </div>
+
+              {/* Back to store */}
+              <div className="p-3 pt-0">
+                <Button variant="outline" size="sm" asChild className="w-full text-xs gap-2 h-8">
+                  <Link to="/"><Home className="h-3.5 w-3.5" /> স্টোরে ফিরুন</Link>
+                </Button>
+              </div>
             </div>
           </aside>
 
-          {/* Mobile top bar + Sheet nav */}
-          <div className="md:hidden w-full mb-2">
-            <div className="flex items-center justify-between gap-2 rounded-xl border bg-card p-3">
+          {/* Mobile top bar */}
+          <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b px-4 py-2.5">
+            <div className="flex items-center justify-between">
               <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button variant="ghost" size="sm" className="gap-2 -ml-2">
                     <Menu className="h-4 w-4" />
                     <span className="font-semibold text-sm truncate">{activeLabel}</span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 p-0">
-                  <SheetHeader className="p-4 pb-2 border-b">
-                    <SheetTitle className="text-left">অ্যাডমিন প্যানেল</SheetTitle>
+                  <SheetHeader className="p-4 border-b bg-gradient-to-r from-primary/5 to-transparent">
+                    <SheetTitle className="text-left flex items-center gap-2.5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                        <Wheat className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">অ্যাডমিন প্যানেল</p>
+                        <p className="text-[10px] text-muted-foreground font-normal">চালসদাই ম্যানেজমেন্ট</p>
+                      </div>
+                    </SheetTitle>
                   </SheetHeader>
-                  <nav className="p-2 space-y-0.5 overflow-y-auto max-h-[calc(100vh-80px)]">
-                    {adminLinks.map((link) => {
-                      const isActive = location.pathname === link.to;
-                      return (
-                        <Link
-                          key={link.to}
-                          to={link.to}
-                          onClick={() => setSheetOpen(false)}
-                          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                            isActive
-                              ? 'bg-primary text-primary-foreground'
-                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                          }`}
-                        >
-                          <link.icon className="h-4 w-4" />
-                          {link.label}
-                        </Link>
-                      );
-                    })}
-                  </nav>
+                  <div className="p-3 overflow-y-auto max-h-[calc(100vh-100px)]">
+                    <SidebarNav onLinkClick={() => setSheetOpen(false)} />
+                    <div className="mt-4">
+                      <Button variant="outline" size="sm" asChild className="w-full text-xs gap-2 h-8" onClick={() => setSheetOpen(false)}>
+                        <Link to="/"><Home className="h-3.5 w-3.5" /> স্টোরে ফিরুন</Link>
+                      </Button>
+                    </div>
+                  </div>
                 </SheetContent>
               </Sheet>
               <AdminNotificationBell />
@@ -138,7 +187,7 @@ const AdminLayout = () => {
           </div>
 
           {/* Content */}
-          <main className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0 pt-14 md:pt-0">
             <Outlet />
           </main>
         </div>
