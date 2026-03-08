@@ -51,7 +51,7 @@ const Contact = () => {
 
         {settings.whatsapp_number && (
           <a href={`https://wa.me/${settings.whatsapp_number.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-500/10">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
               <MessageCircle className="h-6 w-6 text-green-600" />
             </div>
             <div>
