@@ -28,6 +28,7 @@ const Checkout = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
   const subtotal = totalPrice();
   const grandTotal = subtotal + DELIVERY_CHARGE;
