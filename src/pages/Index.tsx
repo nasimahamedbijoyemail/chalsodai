@@ -78,17 +78,19 @@ const Index = () => {
       <div>
         <PageHead
           title="হোম"
-          description="চাল সদাই — ঢাকা শহরে সেরা মানের চাল সরাসরি আপনার ঘরে। বিকাশে পেমেন্ট, দ্রুত ডেলিভারি।"
+          description="Chal Sodai (চাল সদাই) — ঢাকায় সেরা মানের চাল সরাসরি আপনার ঘরে। বিকাশে পেমেন্ট, দ্রুত ডেলিভারি। Buy premium rice online in Dhaka. chalsodai.com"
           canonicalPath="/"
+          keywords="চাল কিনুন অনলাইন, buy rice online Dhaka, বাসমতি চাল, মিনিকেট চাল, নাজিরশাইল, চিনিগুড়া, rice home delivery Bangladesh"
           jsonLd={{
             '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            name: 'চাল সদাই',
-            url: 'https://chalsodai.lovable.app',
-            description: 'ঢাকায় সেরা মানের চাল সরাসরি আপনার ঘরে। দ্রুত ডেলিভারি।',
+            '@type': 'OnlineStore',
+            name: 'Chal Sodai',
+            alternateName: ['চাল সদাই', 'ChalSodai', 'chalsodai'],
+            url: 'https://www.chalsodai.com',
+            description: 'Chal Sodai (চাল সদাই) — Premium rice delivery in Dhaka, Bangladesh. ঢাকায় সেরা মানের চাল সরাসরি আপনার ঘরে।',
             potentialAction: {
               '@type': 'SearchAction',
-              target: 'https://chalsodai.lovable.app/categories?filter={search_term_string}',
+              target: 'https://www.chalsodai.com/categories?filter={search_term_string}',
               'query-input': 'required name=search_term_string',
             },
           }}

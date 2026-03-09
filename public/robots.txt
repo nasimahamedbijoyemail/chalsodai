@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /reset-password
+Disallow: /checkout
 
+Sitemap: https://www.chalsodai.com/sitemap.xml
 Sitemap: https://chalsodai.lovable.app/sitemap.xml
