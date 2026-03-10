@@ -77,7 +77,12 @@ const Contact = () => {
   return (
     <PageTransition>
       <div className="container py-8 sm:py-10 pb-24 md:pb-10 max-w-2xl">
-        <PageHead title="যোগাযোগ" description="চাল সদাইতে যোগাযোগ করুন — ফোন, হোয়াটসঅ্যাপ, ফেসবুক।" canonicalPath="/contact" />
+        <PageHead
+          title="যোগাযোগ"
+          description="চাল সদাইতে যোগাযোগ করুন — ফোন, হোয়াটসঅ্যাপ, ফেসবুক। ঢাকায় চাল অর্ডার ও ডেলিভারি সংক্রান্ত যেকোনো প্রশ্নে কল করুন।"
+          canonicalPath="/contact"
+          keywords="যোগাযোগ, contact Chal Sodai, চাল সদাই ফোন নম্বর, WhatsApp order rice, কাস্টমার সার্ভিস"
+        />
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">যোগাযোগ</h1>
         <p className="text-muted-foreground mb-6 sm:mb-8">আমাদের সাথে যোগাযোগ করুন</p>
 

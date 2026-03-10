@@ -144,7 +144,27 @@ const ProductDetail = () => {
   return (
     <PageTransition>
       <div className="container py-4 sm:py-8 pb-24 md:pb-10">
-        <PageHead title={product.name} description={product.description || `${product.name} — চাল সদাই`} />
+        <PageHead
+          title={product.name}
+          description={product.description || `${product.name} — ${product.pack_size} — চাল সদাই থেকে অনলাইনে অর্ডার করুন। ঢাকায় হোম ডেলিভারি।`}
+          canonicalPath={`/product/${product.id}`}
+          keywords={`${product.name}, ${product.rice_categories?.name || 'চাল'}, buy rice online Dhaka, চাল অর্ডার, ${product.pack_size}`}
+          jsonLd={{
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            description: product.description || product.name,
+            image: product.image_url || undefined,
+            brand: { '@type': 'Brand', name: 'Chal Sodai' },
+            offers: {
+              '@type': 'Offer',
+              price: product.price,
+              priceCurrency: 'BDT',
+              availability: product.is_available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+              seller: { '@type': 'Organization', name: 'Chal Sodai' },
+            },
+          }}
+        />
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4 sm:mb-6 overflow-x-auto">
