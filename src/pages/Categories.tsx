@@ -82,7 +82,12 @@ const Categories = () => {
   return (
     <PageTransition>
       <div className="container py-8 sm:py-10 pb-24 md:pb-10">
-        <PageHead title="চালের ধরণ" description="চাল সদাইতে সকল ধরনের চাল দেখুন — মিনিকেট, নাজিরশাইল, বাসমতি ও আরও অনেক।" canonicalPath="/categories" />
+        <PageHead
+          title="চালের ধরণ"
+          description="চাল সদাইতে সকল ধরনের প্রিমিয়াম চাল দেখুন — মিনিকেট, নাজিরশাইল, বাসমতি, চিনিগুড়া, কাটারিভোগ ও আরও অনেক। ঢাকায় হোম ডেলিভারি।"
+          canonicalPath="/categories"
+          keywords="চালের ধরণ, rice categories, মিনিকেট চাল, নাজিরশাইল, বাসমতি চাল, চিনিগুড়া, premium rice Bangladesh, চাল কিনুন অনলাইন"
+        />
 
         {/* Hero Header */}
         <motion.div

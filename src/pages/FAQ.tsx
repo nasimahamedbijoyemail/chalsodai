@@ -48,8 +48,9 @@ const FAQ = () => {
       <div className="container py-8 sm:py-10 pb-24 md:pb-10 max-w-2xl">
         <PageHead
           title="সাধারণ জিজ্ঞাসা"
-          description="চাল সদাই সম্পর্কে সাধারণ জিজ্ঞাসা ও উত্তর।"
+          description="চাল সদাই সম্পর্কে সাধারণ জিজ্ঞাসা ও উত্তর — অর্ডার, ডেলিভারি, পেমেন্ট ও রিটার্ন পলিসি সংক্রান্ত প্রশ্নোত্তর।"
           canonicalPath="/faq"
+          keywords="FAQ, সাধারণ জিজ্ঞাসা, চাল সদাই প্রশ্ন, ডেলিভারি তথ্য, অর্ডার সাহায্য, rice delivery FAQ Dhaka"
           jsonLd={{
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
