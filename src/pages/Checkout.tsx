@@ -29,7 +29,6 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
   // Determine if this is a direct buy or cart checkout
@@ -39,10 +38,9 @@ const Checkout = () => {
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
-    supabase.from('site_settings').select('key, value').in('key', ['whatsapp_number', 'bkash_number'])
+    supabase.from('site_settings').select('key, value').in('key', ['bkash_number'])
       .then(({ data }) => {
         data?.forEach(s => {
-          if (s.key === 'whatsapp_number') setWhatsappNumber(s.value.replace(/[^0-9]/g, ''));
           if (s.key === 'bkash_number') setBkashDisplayNumber(s.value);
         });
       });
