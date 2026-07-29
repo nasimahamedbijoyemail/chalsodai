@@ -29,7 +29,7 @@ const staticEntries: SitemapEntry[] = [
 async function fetchProductEntries(): Promise<SitemapEntry[]> {
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/products?select=id,updated_at&is_available=eq.true`,
+      `${SUPABASE_URL}/rest/v1/rice_products?select=id,updated_at&is_available=eq.true`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } },
     );
     if (!res.ok) {
