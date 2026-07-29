@@ -400,6 +400,9 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -408,6 +411,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -416,6 +422,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []

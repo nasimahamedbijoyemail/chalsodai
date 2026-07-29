@@ -49,6 +49,31 @@ async function fetchProductEntries(): Promise<SitemapEntry[]> {
   }
 }
 
+async function fetchCategoryEntries(): Promise<SitemapEntry[]> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/rice_categories?select=slug,updated_at`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } },
+    );
+    if (!res.ok) {
+      console.warn(`sitemap: could not fetch categories [${res.status}]`);
+      return [];
+    }
+    const rows = (await res.json()) as { slug: string | null; updated_at: string }[];
+    return rows
+      .filter((row) => !!row.slug)
+      .map((row) => ({
+        path: `/rice/${row.slug}`,
+        lastmod: row.updated_at ? new Date(row.updated_at).toISOString().slice(0, 10) : undefined,
+        changefreq: "weekly" as const,
+        priority: "0.85",
+      }));
+  } catch (error) {
+    console.warn("sitemap: category fetch failed", error);
+    return [];
+  }
+}
+
 function generateSitemap(entries: SitemapEntry[]) {
   const urls = entries.map((e) =>
     [
@@ -71,6 +96,10 @@ function generateSitemap(entries: SitemapEntry[]) {
   ].join("\n");
 }
 
-const entries = [...staticEntries, ...(await fetchProductEntries())];
+const entries = [
+  ...staticEntries,
+  ...(await fetchCategoryEntries()),
+  ...(await fetchProductEntries()),
+];
 writeFileSync(resolve("public/sitemap.xml"), generateSitemap(entries));
 console.log(`sitemap.xml written (${entries.length} entries)`);
