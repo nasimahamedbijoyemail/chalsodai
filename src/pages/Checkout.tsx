@@ -28,6 +28,12 @@ const Checkout = () => {
   const [bkashNumber, setBkashNumber] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [submitted, setSubmitted] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState<{
+    orderNumber: string;
+    items: { name: string; packSize: string; quantity: number; price: number }[];
+    subtotal: number;
+    total: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
