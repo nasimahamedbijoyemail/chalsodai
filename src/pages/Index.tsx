@@ -77,22 +77,84 @@ const Index = () => {
     <PageTransition>
       <div>
         <PageHead
-          title="হোম"
-          description="Chal Sodai (চাল সদাই) — ঢাকায় সেরা মানের চাল সরাসরি আপনার ঘরে। বিকাশে পেমেন্ট, দ্রুত ডেলিভারি। Buy premium rice online in Dhaka. chalsodai.com"
+          title="ঢাকার সেরা অনলাইন চালের দোকান"
+          description="Chal Sodai (চাল সদাই) — ঢাকার সেরা অনলাইন চালের দোকান। মিনিকেট, নাজিরশাইল, চিনিগুড়া ও বাসমতি চাল ঘরে পৌঁছে দেই। বিকাশ বা ক্যাশ অন ডেলিভারি, ফ্ল্যাট ৳৬০ ডেলিভারি চার্জ। Buy premium rice online in Dhaka — chalsodai.com"
           canonicalPath="/"
-          keywords="চাল কিনুন অনলাইন, buy rice online Dhaka, বাসমতি চাল, মিনিকেট চাল, নাজিরশাইল, চিনিগুড়া, rice home delivery Bangladesh"
+          keywords="চাল কিনুন অনলাইন, ঢাকার সেরা চালের দোকান, best online rice shop Dhaka, buy rice online Bangladesh, বাসমতি চাল, মিনিকেট চাল, নাজিরশাইল, চিনিগুড়া, rice home delivery Bangladesh"
           jsonLd={{
             '@context': 'https://schema.org',
-            '@type': 'OnlineStore',
-            name: 'Chal Sodai',
-            alternateName: ['চাল সদাই', 'ChalSodai', 'chalsodai'],
-            url: 'https://www.chalsodai.com',
-            description: 'Chal Sodai (চাল সদাই) — Premium rice delivery in Dhaka, Bangladesh. ঢাকায় সেরা মানের চাল সরাসরি আপনার ঘরে।',
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: 'https://www.chalsodai.com/categories?filter={search_term_string}',
-              'query-input': 'required name=search_term_string',
-            },
+            '@graph': [
+              {
+                '@type': 'OnlineStore',
+                '@id': 'https://www.chalsodai.com/#store',
+                name: 'Chal Sodai',
+                alternateName: ['চাল সদাই', 'ChalSodai', 'chalsodai', 'চালসদাই'],
+                url: 'https://www.chalsodai.com',
+                image: 'https://www.chalsodai.com/favicon.png',
+                telephone: '+8801777416903',
+                currenciesAccepted: 'BDT',
+                paymentAccepted: 'bKash, Cash on Delivery',
+                priceRange: '৳৳',
+                description:
+                  'Chal Sodai (চাল সদাই) — the online rice shop for Dhaka, Bangladesh. Premium Miniket, Nazirshail, Chinigura and Basmati rice delivered home with bKash or cash on delivery.',
+                areaServed: { '@type': 'City', name: 'Dhaka' },
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: 'Dhaka',
+                  addressCountry: 'BD',
+                },
+                hasOfferCatalog: {
+                  '@type': 'OfferCatalog',
+                  name: 'চালের ধরণ',
+                  itemListElement: [
+                    'মিনিকেট চাল',
+                    'নাজিরশাইল চাল',
+                    'চিনিগুড়া চাল',
+                    'বাসমতি চাল',
+                    'আটাশ চাল',
+                    'কাটারিভোগ চাল',
+                  ].map((name) => ({
+                    '@type': 'Offer',
+                    itemOffered: { '@type': 'Product', name, brand: { '@type': 'Brand', name: 'Chal Sodai' } },
+                  })),
+                },
+                potentialAction: {
+                  '@type': 'SearchAction',
+                  target: 'https://www.chalsodai.com/categories?filter={search_term_string}',
+                  'query-input': 'required name=search_term_string',
+                },
+              },
+              {
+                '@type': 'FAQPage',
+                '@id': 'https://www.chalsodai.com/#homefaq',
+                mainEntity: [
+                  {
+                    '@type': 'Question',
+                    name: 'ঢাকায় অনলাইনে চাল কোথা থেকে কিনব?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'Chal Sodai (চাল সদাই, chalsodai.com) থেকে ঢাকায় অনলাইনে প্রিমিয়াম মানের চাল অর্ডার করতে পারেন — মিনিকেট, নাজিরশাইল, চিনিগুড়া ও বাসমতি চাল সরাসরি ঘরে পৌঁছে দেওয়া হয়।',
+                    },
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'চাল সদাই কী কী পেমেন্ট নেয়?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'বিকাশ (bKash) এবং ক্যাশ অন ডেলিভারি — দুইভাবেই পেমেন্ট করা যায়।',
+                    },
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'ডেলিভারি চার্জ কত?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'ঢাকার ভিতরে ফ্ল্যাট ৳৬০ ডেলিভারি চার্জ।',
+                    },
+                  },
+                ],
+              },
+            ],
           }}
         />
 
