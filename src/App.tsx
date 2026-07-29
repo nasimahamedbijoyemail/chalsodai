@@ -39,6 +39,7 @@ const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
 const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminFAQs = lazy(() => import("./pages/admin/AdminFAQs"));
+const AdminSEO = lazy(() => import("./pages/admin/AdminSEO"));
 const AdminNotifications = lazy(() => import("./pages/admin/AdminNotifications"));
 const AdminDeletionRequests = lazy(() => import("./pages/admin/AdminDeletionRequests"));
 const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
@@ -102,6 +103,7 @@ const AnimatedRoutes = () => {
         <Route path="orders" element={<Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense>} />
         <Route path="products" element={<Suspense fallback={<PageSkeleton />}><AdminProducts /></Suspense>} />
         <Route path="customers" element={<Suspense fallback={<PageSkeleton />}><AdminCustomers /></Suspense>} />
+        <Route path="seo" element={<Suspense fallback={<PageSkeleton />}><AdminSEO /></Suspense>} />
         <Route path="faqs" element={<Suspense fallback={<PageSkeleton />}><AdminFAQs /></Suspense>} />
         <Route path="notifications" element={<Suspense fallback={<PageSkeleton />}><AdminNotifications /></Suspense>} />
         <Route path="messages" element={<Suspense fallback={<PageSkeleton />}><AdminMessages /></Suspense>} />
