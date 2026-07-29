@@ -145,27 +145,70 @@ const ProductDetail = () => {
     <PageTransition>
       <div className="container py-4 sm:py-8 pb-24 md:pb-10">
         <PageHead
-          title={product.name}
-          description={product.description || `${product.name} — ${product.pack_size} — চাল সদাই থেকে অনলাইনে অর্ডার করুন। ঢাকায় হোম ডেলিভারি।`}
+          title={`${product.name} (${product.pack_size})`}
+          description={
+            product.description ||
+            `${product.name} — ${product.pack_size} প্যাক, দাম ৳${product.price}। চাল সদাই থেকে অনলাইনে অর্ডার করুন, ঢাকায় হোম ডেলিভারি, বিকাশ ও ক্যাশ অন ডেলিভারি।`
+          }
           canonicalPath={`/product/${product.id}`}
-          keywords={`${product.name}, ${product.rice_categories?.name || 'চাল'}, buy rice online Dhaka, চাল অর্ডার, ${product.pack_size}`}
+          ogType="product"
+          ogImage={product.image_url || undefined}
+          keywords={`${product.name}, ${product.rice_categories?.name || 'চাল'}, ${product.pack_size} চালের দাম, buy rice online Dhaka, চাল অর্ডার`}
           jsonLd={{
             '@context': 'https://schema.org',
             '@graph': [
               {
                 '@type': 'Product',
-                name: product.name,
-                description: product.description || product.name,
-                image: product.image_url || undefined,
+                '@id': `https://www.chalsodai.com/product/${product.id}#product`,
+                name: `${product.name} (${product.pack_size})`,
+                sku: product.id,
+                mpn: product.id,
+                description:
+                  product.description || `${product.name} — ${product.pack_size} প্যাক। চাল সদাই, ঢাকা।`,
+                image: allImages.filter((img) => img && !img.startsWith('/placeholder')),
                 category: product.rice_categories?.name || 'চাল',
                 brand: { '@type': 'Brand', name: 'Chal Sodai' },
+                material: 'চাল (Rice)',
+                weight: { '@type': 'QuantitativeValue', name: product.pack_size },
+                additionalProperty: [
+                  { '@type': 'PropertyValue', name: 'প্যাক সাইজ', value: product.pack_size },
+                  {
+                    '@type': 'PropertyValue',
+                    name: 'চালের ধরণ',
+                    value: product.rice_categories?.name || 'চাল',
+                  },
+                ],
                 offers: {
                   '@type': 'Offer',
+                  '@id': `https://www.chalsodai.com/product/${product.id}#offer`,
                   url: `https://www.chalsodai.com/product/${product.id}`,
-                  price: product.price,
+                  price: Number(product.price),
                   priceCurrency: 'BDT',
-                  availability: product.is_available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-                  seller: { '@type': 'Organization', name: 'Chal Sodai' },
+                  priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+                  itemCondition: 'https://schema.org/NewCondition',
+                  availability: product.is_available
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+                  eligibleQuantity: { '@type': 'QuantitativeValue', unitText: product.pack_size },
+                  areaServed: { '@type': 'City', name: 'Dhaka' },
+                  seller: { '@type': 'Organization', name: 'Chal Sodai', url: 'https://www.chalsodai.com' },
+                  shippingDetails: {
+                    '@type': 'OfferShippingDetails',
+                    shippingRate: {
+                      '@type': 'MonetaryAmount',
+                      value: DELIVERY_CHARGE,
+                      currency: 'BDT',
+                    },
+                    shippingDestination: {
+                      '@type': 'DefinedRegion',
+                      addressCountry: 'BD',
+                      addressRegion: 'Dhaka',
+                    },
+                  },
+                  acceptedPaymentMethod: [
+                    { '@type': 'PaymentMethod', name: 'bKash' },
+                    { '@type': 'PaymentMethod', name: 'Cash on Delivery' },
+                  ],
                 },
               },
               {
