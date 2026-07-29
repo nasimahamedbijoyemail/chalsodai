@@ -96,6 +96,10 @@ function generateSitemap(entries: SitemapEntry[]) {
   ].join("\n");
 }
 
-const entries = [...staticEntries, ...(await fetchProductEntries())];
+const entries = [
+  ...staticEntries,
+  ...(await fetchCategoryEntries()),
+  ...(await fetchProductEntries()),
+];
 writeFileSync(resolve("public/sitemap.xml"), generateSitemap(entries));
 console.log(`sitemap.xml written (${entries.length} entries)`);
