@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '@/components/ProductCard';
 import ProductCardSkeleton from '@/components/ProductCardSkeleton';
@@ -13,6 +13,7 @@ interface Category {
   id: string;
   name: string;
   image_url: string | null;
+  slug?: string | null;
 }
 
 interface Product {
@@ -38,7 +39,7 @@ const Categories = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [catRes, prodRes] = await Promise.all([
-        supabase.from('rice_categories').select('id, name, image_url').order('name'),
+        supabase.from('rice_categories').select('id, name, image_url, slug').order('name'),
         supabase.from('rice_products').select('*, rice_categories(id, name, image_url)').eq('is_available', true).order('name'),
       ]);
       
@@ -87,6 +88,35 @@ const Categories = () => {
           description="চাল সদাইতে সকল ধরনের প্রিমিয়াম চাল দেখুন — মিনিকেট, নাজিরশাইল, বাসমতি, চিনিগুড়া, কাটারিভোগ ও আরও অনেক। ঢাকায় হোম ডেলিভারি।"
           canonicalPath="/categories"
           keywords="চালের ধরণ, rice categories, মিনিকেট চাল, নাজিরশাইল, বাসমতি চাল, চিনিগুড়া, premium rice Bangladesh, চাল কিনুন অনলাইন"
+          jsonLd={{
+            '@context': 'https://schema.org',
+            '@graph': [
+              {
+                '@type': 'CollectionPage',
+                name: 'চালের ধরণ — Chal Sodai',
+                url: 'https://www.chalsodai.com/categories',
+                description:
+                  'চাল সদাইতে সকল ধরনের প্রিমিয়াম চাল — মিনিকেট, নাজিরশাইল, বাসমতি, চিনিগুড়া ও আরও অনেক। ঢাকায় হোম ডেলিভারি।',
+              },
+              {
+                '@type': 'ItemList',
+                numberOfItems: products.length,
+                itemListElement: products.slice(0, 50).map((p, i) => ({
+                  '@type': 'ListItem',
+                  position: i + 1,
+                  url: `https://www.chalsodai.com/product/${p.id}`,
+                  name: `${p.name} (${p.pack_size})`,
+                })),
+              },
+              {
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'হোম', item: 'https://www.chalsodai.com/' },
+                  { '@type': 'ListItem', position: 2, name: 'চালের ধরণ', item: 'https://www.chalsodai.com/categories' },
+                ],
+              },
+            ],
+          }}
         />
 
         {/* Hero Header */}
@@ -180,6 +210,23 @@ const Categories = () => {
             );
           })}
         </motion.div>
+
+        {/* SEO landing page links */}
+        {categories.some((c) => c.slug) && (
+          <div className="mb-8 text-sm text-muted-foreground">
+            <span className="mr-2">চালের ধরন অনুযায়ী পেজ:</span>
+            {categories
+              .filter((c) => c.slug)
+              .map((c, i) => (
+                <span key={c.id}>
+                  {i > 0 && ' · '}
+                  <Link to={`/rice/${c.slug}`} className="text-primary underline underline-offset-4">
+                    {c.name} চাল
+                  </Link>
+                </span>
+              ))}
+          </div>
+        )}
 
         {/* Active filter indicator */}
         <AnimatePresence>
