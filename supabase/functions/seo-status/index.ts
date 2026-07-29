@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_search_console";
-const SITE_ORIGIN = "https://www.chalsodai.com";
+const SITE_ORIGIN = "https://chalsodai.com";
 const SITEMAP_URL = `${SITE_ORIGIN}/sitemap.xml`;
 
 const json = (body: unknown, status = 200) =>

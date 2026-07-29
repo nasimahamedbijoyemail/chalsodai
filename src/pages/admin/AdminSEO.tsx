@@ -66,7 +66,7 @@ const AdminSEO = () => {
 
   const load = async (siteUrl?: string) => {
     const { data: res, error } = await supabase.functions.invoke('seo-status', {
-      body: { selectedSiteUrl: siteUrl, inspectUrls: ['https://www.chalsodai.com/', 'https://www.chalsodai.com/categories'] },
+      body: { selectedSiteUrl: siteUrl, inspectUrls: ['https://chalsodai.com/', 'https://chalsodai.com/categories'] },
     });
     if (error) {
       toast.error('SEO স্ট্যাটাস আনতে সমস্যা হয়েছে');
@@ -125,7 +125,7 @@ const AdminSEO = () => {
 
       {data?.connected && data.status === 'no_property' && (
         <div className="rounded-xl border p-5 text-sm text-muted-foreground">
-          এই অ্যাকাউন্টে www.chalsodai.com এর কোনো ভেরিফায়েড প্রপার্টি পাওয়া যায়নি।
+          এই অ্যাকাউন্টে chalsodai.com এর কোনো ভেরিফায়েড প্রপার্টি পাওয়া যায়নি।
         </div>
       )}
 
