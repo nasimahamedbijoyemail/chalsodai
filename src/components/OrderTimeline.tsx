@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Clock, CreditCard, Package, Truck, CheckCircle2, XCircle } from 'lucide-react';
 
-const steps = [
+const allSteps = [
   { key: 'pending', label: 'অর্ডার গৃহীত', icon: Clock },
   { key: 'payment_received', label: 'পেমেন্ট গৃহীত', icon: CreditCard },
   { key: 'processing', label: 'প্রস্তুত হচ্ছে', icon: Package },
@@ -11,9 +11,14 @@ const steps = [
 
 interface OrderTimelineProps {
   currentStatus: string;
+  paymentMethod?: string;
 }
 
-const OrderTimeline = ({ currentStatus }: OrderTimelineProps) => {
+const OrderTimeline = ({ currentStatus, paymentMethod }: OrderTimelineProps) => {
+  // Cash on delivery has no payment-confirmation stage
+  const steps = paymentMethod === 'cod'
+    ? allSteps.filter((s) => s.key !== 'payment_received')
+    : allSteps;
   if (currentStatus === 'cancelled') {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
@@ -26,7 +31,8 @@ const OrderTimeline = ({ currentStatus }: OrderTimelineProps) => {
     );
   }
 
-  const currentIndex = steps.findIndex((s) => s.key === currentStatus);
+  const effectiveStatus = paymentMethod === 'cod' && currentStatus === 'payment_received' ? 'processing' : currentStatus;
+  const currentIndex = steps.findIndex((s) => s.key === effectiveStatus);
 
   return (
     <div className="rounded-xl border bg-card p-5">

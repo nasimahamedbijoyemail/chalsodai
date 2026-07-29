@@ -41,6 +41,15 @@ const statusLabels: Record<string, { label: string; variant: 'default' | 'second
   cancelled: { label: 'বাতিল', variant: 'destructive' },
 };
 
+// Cash-on-delivery orders have no payment-waiting stage
+const getStatusInfo = (status: string, paymentMethod: string) => {
+  if (paymentMethod === 'cod') {
+    if (status === 'pending') return { label: 'অর্ডার গৃহীত', variant: 'secondary' as const };
+    if (status === 'payment_received') return { label: 'প্রস্তুত হচ্ছে', variant: 'default' as const };
+  }
+  return statusLabels[status] || statusLabels.pending;
+};
+
 const OrderDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user, loading: authLoading } = useAuth();
@@ -88,7 +97,7 @@ const OrderDetail = () => {
     );
   }
 
-  const status = statusLabels[order.status] || statusLabels.pending;
+  const status = getStatusInfo(order.status, order.payment_method);
   const subtotal = items.reduce((sum, i) => sum + i.product_price * i.quantity, 0);
 
   return (
@@ -114,7 +123,7 @@ const OrderDetail = () => {
 
         {/* Order Timeline */}
         <div className="mb-6">
-          <OrderTimeline currentStatus={order.status} />
+          <OrderTimeline currentStatus={order.status} paymentMethod={order.payment_method} />
         </div>
 
         {/* Order Items */}
