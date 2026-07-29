@@ -114,6 +114,13 @@ const AdminFAQs = () => {
     }
   };
 
+  const q = search.trim().toLowerCase();
+  const filteredFaqs = q
+    ? faqs.filter(
+        (f) => f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q),
+      )
+    : faqs;
+
   if (loading) {
     return (
       <div className="py-10 text-center">
