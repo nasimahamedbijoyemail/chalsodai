@@ -113,25 +113,9 @@ const Checkout = () => {
         }
       }
 
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: currentUser?.id || null,
-          customer_name: name,
-          customer_phone: phone,
-          customer_address: address,
-          bkash_number: paymentMethod === 'bkash' ? bkashNumber : null,
-          payment_method: paymentMethod,
-          total_amount: grandTotal,
-          delivery_charge: DELIVERY_CHARGE,
-        })
-        .select()
-        .single();
+      let order: { id: string; order_number: string };
 
-      if (orderError) throw orderError;
-
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
+      const itemsPayload = items.map((item) => ({
         product_id: item.id,
         product_name: item.name,
         product_price: item.price,
@@ -139,8 +123,50 @@ const Checkout = () => {
         pack_size: item.packSize,
       }));
 
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
-      if (itemsError) throw itemsError;
+      if (currentUser) {
+        const { data: newOrder, error: orderError } = await supabase
+          .from('orders')
+          .insert({
+            user_id: currentUser.id,
+            customer_name: name,
+            customer_phone: phone,
+            customer_address: address,
+            bkash_number: paymentMethod === 'bkash' ? bkashNumber : null,
+            payment_method: paymentMethod,
+            total_amount: grandTotal,
+            delivery_charge: DELIVERY_CHARGE,
+          })
+          .select()
+          .single();
+
+        if (orderError) throw orderError;
+        order = newOrder;
+
+        const { error: itemsError } = await supabase
+          .from('order_items')
+          .insert(itemsPayload.map((i) => ({ ...i, order_id: order.id })));
+        if (itemsError) throw itemsError;
+      } else {
+        const { data: guestOrder, error: guestError } = await supabase.functions.invoke(
+          'create-guest-order',
+          {
+            body: {
+              customer_name: name,
+              customer_phone: phone,
+              customer_address: address,
+              bkash_number: paymentMethod === 'bkash' ? bkashNumber : null,
+              payment_method: paymentMethod,
+              total_amount: grandTotal,
+              delivery_charge: DELIVERY_CHARGE,
+              items: itemsPayload,
+            },
+          },
+        );
+
+        if (guestError || !guestOrder?.order_number) throw guestError || new Error('Order failed');
+        order = guestOrder;
+      }
+
 
       if (currentUser) {
         await supabase.from('notifications').insert({
