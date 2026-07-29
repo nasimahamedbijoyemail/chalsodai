@@ -157,23 +157,25 @@ const Checkout = () => {
         toast.success('আপনার অ্যাকাউন্টও তৈরি হয়েছে!');
       }
 
-      const whatsappMsg = encodeURIComponent(
-        `✅ নতুন অর্ডার!\n\n` +
-        `📋 অর্ডার নং: ${order.order_number}\n` +
-        `👤 নাম: ${name}\n` +
-        `📱 ফোন: ${phone}\n` +
-        `📍 ঠিকানা: ${address}\n` +
-        `💰 মোট: ৳${grandTotal}\n` +
-        `💳 পেমেন্ট: ${paymentMethod === 'cod' ? 'ক্যাশ অন ডেলিভারি' : 'বিকাশ'}\n` +
-        (paymentMethod === 'bkash' ? `🔖 ট্রানজেকশন: ${bkashNumber}\n` : '') +
-        `\nপণ্য:\n` +
-        items.map(i => `• ${i.name} × ${i.quantity} = ৳${i.price * i.quantity}`).join('\n')
-      );
-      if (whatsappNumber) {
-        setTimeout(() => {
-          window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
-        }, 1500);
-      }
+      // Send order confirmation to the store owner's WhatsApp (server-side, no redirect)
+      supabase.functions.invoke('order-whatsapp-notify', {
+        body: {
+          orderNumber: order.order_number,
+          customerName: name,
+          customerPhone: phone,
+          customerAddress: address,
+          paymentMethod,
+          bkashNumber: paymentMethod === 'bkash' ? bkashNumber : null,
+          deliveryCharge: DELIVERY_CHARGE,
+          totalAmount: grandTotal,
+          items: items.map((i) => ({
+            name: i.name,
+            quantity: i.quantity,
+            price: i.price,
+            packSize: i.packSize,
+          })),
+        },
+      }).catch((e) => console.error('WhatsApp notify failed', e));
     } catch (error) {
       console.error('Order error:', error);
       toast.error('অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
