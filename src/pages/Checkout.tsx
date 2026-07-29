@@ -150,6 +150,17 @@ const Checkout = () => {
         });
       }
 
+      setPlacedOrder({
+        orderNumber: order.order_number,
+        items: items.map((i) => ({
+          name: i.name,
+          packSize: i.packSize,
+          quantity: i.quantity,
+          price: i.price,
+        })),
+        subtotal,
+        total: grandTotal,
+      });
       setSubmitted(true);
       if (isBuyNow) {
         clearBuyNow();
