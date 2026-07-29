@@ -270,6 +270,53 @@ const Checkout = () => {
             </p>
           </motion.div>
 
+          {placedOrder && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="rounded-xl border bg-card text-left overflow-hidden mb-6"
+            >
+              <div className="flex items-center justify-between gap-2 px-4 py-3 border-b bg-muted/40">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  অর্ডার নম্বর
+                </span>
+                <span className="font-bold text-sm">{placedOrder.orderNumber}</span>
+              </div>
+              <div className="px-4 py-3 space-y-2">
+                {placedOrder.items.map((it, i) => (
+                  <div key={i} className="flex items-start justify-between gap-3 text-sm">
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{it.name}</p>
+                      <p className="text-xs text-muted-foreground">{it.packSize} × {it.quantity}</p>
+                    </div>
+                    <span className="shrink-0 font-medium">৳{it.price * it.quantity}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-3 border-t space-y-1 bg-muted/30">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>সাবটোটাল</span>
+                  <span>৳{placedOrder.subtotal}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>ডেলিভারি চার্জ</span>
+                  <span>৳{DELIVERY_CHARGE}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>পেমেন্ট</span>
+                  <span>{paymentMethod === 'cod' ? 'ক্যাশ অন ডেলিভারি' : 'বিকাশ'}</span>
+                </div>
+                <div className="flex justify-between font-bold text-base pt-1">
+                  <span>মোট</span>
+                  <span className="text-primary">৳{placedOrder.total}</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+
+
           {user && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
