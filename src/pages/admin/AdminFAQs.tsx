@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Loader2, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, Search } from 'lucide-react';
 
 interface FAQ {
   id: string;
@@ -165,11 +165,23 @@ const AdminFAQs = () => {
         </Dialog>
       </div>
 
-      {faqs.length === 0 ? (
-        <p className="text-center text-muted-foreground py-10">কোনো FAQ যোগ করা হয়নি</p>
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="প্রশ্ন বা উত্তর খুঁজুন..."
+          className="pl-9"
+        />
+      </div>
+
+      {filteredFaqs.length === 0 ? (
+        <p className="text-center text-muted-foreground py-10">
+          {faqs.length === 0 ? 'কোনো FAQ যোগ করা হয়নি' : 'কোনো ফলাফল পাওয়া যায়নি'}
+        </p>
       ) : (
         <div className="space-y-3">
-          {faqs.map((faq) => (
+          {filteredFaqs.map((faq) => (
             <div key={faq.id} className={`rounded-xl border bg-card p-4 ${!faq.is_active ? 'opacity-50' : ''}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
@@ -189,6 +201,7 @@ const AdminFAQs = () => {
           ))}
         </div>
       )}
+
     </div>
   );
 };
