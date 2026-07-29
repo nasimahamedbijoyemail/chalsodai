@@ -208,10 +208,11 @@ const CategoryLanding = () => {
                 product={{
                   id: p.id,
                   name: p.name,
+                  category: category.name,
                   price: Number(p.price),
-                  pack_size: p.pack_size,
-                  description: p.description,
-                  image_url: p.image_url,
+                  packSize: p.pack_size,
+                  description: p.description || '',
+                  image: p.image_url || '/placeholder.svg',
                 }}
               />
             ))}
