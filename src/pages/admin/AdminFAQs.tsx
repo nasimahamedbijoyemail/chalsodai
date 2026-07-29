@@ -29,11 +29,13 @@ const AdminFAQs = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState('');
 
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [sortOrder, setSortOrder] = useState('0');
   const [isActive, setIsActive] = useState(true);
+
 
   const fetchFaqs = async () => {
     const { data } = await supabase
