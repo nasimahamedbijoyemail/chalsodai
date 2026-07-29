@@ -151,18 +151,37 @@ const ProductDetail = () => {
           keywords={`${product.name}, ${product.rice_categories?.name || 'চাল'}, buy rice online Dhaka, চাল অর্ডার, ${product.pack_size}`}
           jsonLd={{
             '@context': 'https://schema.org',
-            '@type': 'Product',
-            name: product.name,
-            description: product.description || product.name,
-            image: product.image_url || undefined,
-            brand: { '@type': 'Brand', name: 'Chal Sodai' },
-            offers: {
-              '@type': 'Offer',
-              price: product.price,
-              priceCurrency: 'BDT',
-              availability: product.is_available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-              seller: { '@type': 'Organization', name: 'Chal Sodai' },
-            },
+            '@graph': [
+              {
+                '@type': 'Product',
+                name: product.name,
+                description: product.description || product.name,
+                image: product.image_url || undefined,
+                category: product.rice_categories?.name || 'চাল',
+                brand: { '@type': 'Brand', name: 'Chal Sodai' },
+                offers: {
+                  '@type': 'Offer',
+                  url: `https://www.chalsodai.com/product/${product.id}`,
+                  price: product.price,
+                  priceCurrency: 'BDT',
+                  availability: product.is_available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                  seller: { '@type': 'Organization', name: 'Chal Sodai' },
+                },
+              },
+              {
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'হোম', item: 'https://www.chalsodai.com/' },
+                  { '@type': 'ListItem', position: 2, name: 'চালের ধরণ', item: 'https://www.chalsodai.com/categories' },
+                  {
+                    '@type': 'ListItem',
+                    position: 3,
+                    name: product.name,
+                    item: `https://www.chalsodai.com/product/${product.id}`,
+                  },
+                ],
+              },
+            ],
           }}
         />
 
