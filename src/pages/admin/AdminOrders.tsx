@@ -63,6 +63,15 @@ const statusLabels: Record<OrderStatus, string> = {
   cancelled: 'বাতিল',
 };
 
+// Cash-on-delivery orders never wait for a payment, so those labels are replaced
+const getStatusLabel = (status: OrderStatus, paymentMethod: string) => {
+  if (paymentMethod === 'cod') {
+    if (status === 'pending') return 'অর্ডার গৃহীত';
+    if (status === 'payment_received') return 'প্রস্তুত হচ্ছে';
+  }
+  return statusLabels[status];
+};
+
 const statusIcons: Record<OrderStatus, React.ElementType> = {
   pending: Clock,
   payment_received: CreditCard,
@@ -145,7 +154,7 @@ const AdminOrders = () => {
         await supabase.from('notifications').insert({
           user_id: selectedOrder.user_id,
           title: 'অর্ডার আপডেট',
-          message: `আপনার অর্ডার ${selectedOrder.order_number} এর স্ট্যাটাস: ${statusLabels[newStatus]}`,
+          message: `আপনার অর্ডার ${selectedOrder.order_number} এর স্ট্যাটাস: ${getStatusLabel(newStatus, selectedOrder.payment_method)}`,
         });
       }
 
@@ -276,7 +285,7 @@ const AdminOrders = () => {
                             className="text-[10px] px-1.5 py-0 gap-1"
                           >
                             <StatusIcon className="h-2.5 w-2.5" />
-                            {statusLabels[order.status]}
+                            {getStatusLabel(order.status, order.payment_method)}
                           </Badge>
                         </div>
 
@@ -341,7 +350,7 @@ const AdminOrders = () => {
                     </DialogTitle>
                     <Badge variant={statusBadgeVariants[selectedOrder.status]} className="gap-1 text-xs">
                       {React.createElement(statusIcons[selectedOrder.status], { className: 'h-3 w-3' })}
-                      {statusLabels[selectedOrder.status]}
+                      {getStatusLabel(selectedOrder.status, selectedOrder.payment_method)}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -436,7 +445,12 @@ const AdminOrders = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(statusLabels).map(([value, label]) => {
+                      {Object.entries(statusLabels)
+                        .filter(([value]) =>
+                          selectedOrder.payment_method !== 'cod' ||
+                          !['pending', 'payment_received'].includes(value)
+                        )
+                        .map(([value, label]) => {
                         const Icon = statusIcons[value as OrderStatus];
                         return (
                           <SelectItem key={value} value={value}>
