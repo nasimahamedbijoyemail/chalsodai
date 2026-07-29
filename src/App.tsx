@@ -16,6 +16,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import PageSkeleton from "./components/PageSkeleton";
 import Index from "./pages/Index";
 import Categories from "./pages/Categories";
+import CategoryLanding from "./pages/CategoryLanding";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import FAQ from "./pages/FAQ";
@@ -78,6 +79,7 @@ const AnimatedRoutes = () => {
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={<Index />} />
       <Route path="/categories" element={<Categories />} />
+      <Route path="/rice/:slug" element={<CategoryLanding />} />
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
