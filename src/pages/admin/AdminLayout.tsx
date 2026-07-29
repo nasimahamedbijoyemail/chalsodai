@@ -28,6 +28,7 @@ import {
   Wheat,
   ChevronRight,
   Home,
+  Search,
 } from 'lucide-react';
 
 const adminLinks = [
@@ -37,6 +38,7 @@ const adminLinks = [
   { to: '/admin/promotions', label: 'প্রমোশন ব্যানার', icon: Image, group: 'main' },
   { to: '/admin/customers', label: 'কাস্টমার', icon: Users, group: 'main' },
   { to: '/admin/faqs', label: 'FAQ ম্যানেজ', icon: HelpCircle, group: 'tools' },
+  { to: '/admin/seo', label: 'SEO স্ট্যাটাস', icon: Search, group: 'tools' },
   { to: '/admin/notifications', label: 'নোটিফিকেশন', icon: Bell, group: 'tools' },
   { to: '/admin/messages', label: 'মেসেজ', icon: MessageCircle, group: 'tools' },
   { to: '/admin/deletion-requests', label: 'ডিলিট রিকোয়েস্ট', icon: Trash2, group: 'tools' },
