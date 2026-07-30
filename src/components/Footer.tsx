@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Phone, MapPin, MessageCircle, Facebook, ShoppingBag, HelpCircle, Home, Mail, Wheat, ArrowUpRight, Heart } from 'lucide-react';
+import { Phone, MapPin, MessageCircle, Facebook, ShoppingBag, HelpCircle, Home, Mail, Wheat, ArrowUpRight, Heart, PackageSearch } from 'lucide-react';
 
 const Footer = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -22,6 +22,7 @@ const Footer = () => {
   const quickLinks = [
     { to: '/', label: 'হোম', icon: Home },
     { to: '/categories', label: 'চালের ধরণ', icon: ShoppingBag },
+    { to: '/track', label: 'অর্ডার ট্র্যাক', icon: PackageSearch },
     { to: '/faq', label: 'সাধারণ জিজ্ঞাসা', icon: HelpCircle },
     { to: '/contact', label: 'যোগাযোগ', icon: Mail },
   ];

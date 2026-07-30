@@ -361,9 +361,17 @@ const Checkout = () => {
             transition={{ delay: 0.7 }}
           >
             <Button onClick={() => navigate('/')} size="lg">হোমে ফিরুন</Button>
-            {user && (
+            {user ? (
               <Button variant="outline" size="lg" onClick={() => navigate('/my-orders')}>
                 আমার অর্ডার দেখুন
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate(`/track?order=${placedOrder?.orderNumber ?? ''}`)}
+              >
+                অর্ডার ট্র্যাক করুন
               </Button>
             )}
           </motion.div>

@@ -21,6 +21,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/", changefreq: "daily", priority: "1.0" },
   { path: "/categories", changefreq: "daily", priority: "0.9" },
   { path: "/faq", changefreq: "weekly", priority: "0.6" },
+  { path: "/track", changefreq: "monthly", priority: "0.5" },
   { path: "/contact", changefreq: "monthly", priority: "0.5" },
   { path: "/install", changefreq: "monthly", priority: "0.3" },
   { path: "/auth", changefreq: "monthly", priority: "0.3" },

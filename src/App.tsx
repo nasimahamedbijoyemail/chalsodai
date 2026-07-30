@@ -30,6 +30,7 @@ import Messages from "./pages/Messages";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
+import TrackOrder from "./pages/TrackOrder";
 import NotFound from "./pages/NotFound";
 
 // Lazy load admin routes
@@ -94,6 +95,8 @@ const AnimatedRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/order/:id" element={<OrderDetail />} />
+      <Route path="/track" element={<TrackOrder />} />
+
       <Route path="/admin" element={
         <Suspense fallback={<PageSkeleton />}>
           <AdminLayout />
