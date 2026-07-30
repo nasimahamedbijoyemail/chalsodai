@@ -95,6 +95,8 @@ const AnimatedRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/order/:id" element={<OrderDetail />} />
+      <Route path="/track" element={<TrackOrder />} />
+
       <Route path="/admin" element={
         <Suspense fallback={<PageSkeleton />}>
           <AdminLayout />
