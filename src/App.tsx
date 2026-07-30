@@ -30,6 +30,7 @@ import Messages from "./pages/Messages";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
+import TrackOrder from "./pages/TrackOrder";
 import NotFound from "./pages/NotFound";
 
 // Lazy load admin routes
