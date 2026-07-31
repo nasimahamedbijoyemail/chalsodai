@@ -464,7 +464,7 @@ const Checkout = () => {
 
 
         {/* COD Info */}
-        {paymentMethod === 'cod' && (
+        {(
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
