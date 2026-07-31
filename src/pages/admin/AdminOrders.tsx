@@ -36,7 +36,6 @@ interface Order {
   customer_name: string;
   customer_phone: string;
   customer_address: string;
-  bkash_number: string;
   payment_method: string;
   total_amount: number;
   delivery_charge: number;
@@ -54,27 +53,21 @@ interface OrderItem {
   pack_size: string;
 }
 
+// Cash on delivery only — no payment verification stage
 const statusLabels: Record<OrderStatus, string> = {
-  pending: 'পেমেন্ট অপেক্ষায়',
-  payment_received: 'পেমেন্ট গৃহীত',
+  pending: 'অর্ডার গৃহীত',
+  payment_received: 'প্রস্তুত হচ্ছে',
   processing: 'প্রস্তুত হচ্ছে',
   shipped: 'ডেলিভারিতে',
   delivered: 'ডেলিভারি সম্পন্ন',
   cancelled: 'বাতিল',
 };
 
-// Cash-on-delivery orders never wait for a payment, so those labels are replaced
-const getStatusLabel = (status: OrderStatus, paymentMethod: string) => {
-  if (paymentMethod === 'cod') {
-    if (status === 'pending') return 'অর্ডার গৃহীত';
-    if (status === 'payment_received') return 'প্রস্তুত হচ্ছে';
-  }
-  return statusLabels[status];
-};
+const getStatusLabel = (status: OrderStatus) => statusLabels[status];
 
 const statusIcons: Record<OrderStatus, React.ElementType> = {
   pending: Clock,
-  payment_received: CreditCard,
+  payment_received: Package,
   processing: Package,
   shipped: Truck,
   delivered: CheckCircle,
@@ -101,8 +94,7 @@ const statusBadgeVariants: Record<OrderStatus, 'default' | 'secondary' | 'destru
 
 const statusFilters: { value: string; label: string; icon: React.ElementType }[] = [
   { value: 'all', label: 'সব', icon: ShoppingBag },
-  { value: 'pending', label: 'পেন্ডিং', icon: Clock },
-  { value: 'payment_received', label: 'পেমেন্ট গৃহীত', icon: CreditCard },
+  { value: 'pending', label: 'নতুন অর্ডার', icon: Clock },
   { value: 'processing', label: 'প্রস্তুত হচ্ছে', icon: Package },
   { value: 'shipped', label: 'ডেলিভারিতে', icon: Truck },
   { value: 'delivered', label: 'সম্পন্ন', icon: CheckCircle },
@@ -285,7 +277,7 @@ const AdminOrders = () => {
                             className="text-[10px] px-1.5 py-0 gap-1"
                           >
                             <StatusIcon className="h-2.5 w-2.5" />
-                            {getStatusLabel(order.status, order.payment_method)}
+                            {getStatusLabel(order.status)}
                           </Badge>
                         </div>
 
@@ -306,11 +298,7 @@ const AdminOrders = () => {
 
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
-                            {order.payment_method === 'cod' ? (
-                              <><Banknote className="h-3 w-3" /> ক্যাশ অন ডেলিভারি</>
-                            ) : (
-                              <><CreditCard className="h-3 w-3" /> বিকাশ{order.bkash_number ? ` • ${order.bkash_number}` : ''}</>
-                            )}
+                            <Banknote className="h-3 w-3" /> ক্যাশ অন ডেলিভারি
                           </span>
                         </div>
                       </div>
@@ -350,7 +338,7 @@ const AdminOrders = () => {
                     </DialogTitle>
                     <Badge variant={statusBadgeVariants[selectedOrder.status]} className="gap-1 text-xs">
                       {React.createElement(statusIcons[selectedOrder.status], { className: 'h-3 w-3' })}
-                      {getStatusLabel(selectedOrder.status, selectedOrder.payment_method)}
+                      {getStatusLabel(selectedOrder.status)}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -390,18 +378,9 @@ const AdminOrders = () => {
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">পেমেন্ট তথ্য</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2.5">
-                      {selectedOrder.payment_method === 'cod' ? (
-                        <><Banknote className="h-4 w-4 text-muted-foreground" /><span>ক্যাশ অন ডেলিভারি</span></>
-                      ) : (
-                        <><CreditCard className="h-4 w-4 text-muted-foreground" /><span>বিকাশ পেমেন্ট</span></>
-                      )}
+                      <Banknote className="h-4 w-4 text-muted-foreground" />
+                      <span>ক্যাশ অন ডেলিভারি — ডেলিভারির সময় টাকা সংগ্রহ</span>
                     </div>
-                    {selectedOrder.bkash_number && (
-                      <div className="flex items-center gap-2.5">
-                        <Hash className="h-4 w-4 text-muted-foreground" />
-                        <span>ট্রানজেকশন: <strong>{selectedOrder.bkash_number}</strong></span>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -446,10 +425,7 @@ const AdminOrders = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(statusLabels)
-                        .filter(([value]) =>
-                          selectedOrder.payment_method !== 'cod' ||
-                          !['pending', 'payment_received'].includes(value)
-                        )
+                        .filter(([value]) => value !== 'payment_received')
                         .map(([value, label]) => {
                         const Icon = statusIcons[value as OrderStatus];
                         return (
