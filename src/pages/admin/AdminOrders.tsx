@@ -146,7 +146,7 @@ const AdminOrders = () => {
         await supabase.from('notifications').insert({
           user_id: selectedOrder.user_id,
           title: 'অর্ডার আপডেট',
-          message: `আপনার অর্ডার ${selectedOrder.order_number} এর স্ট্যাটাস: ${getStatusLabel(newStatus, selectedOrder.payment_method)}`,
+          message: `আপনার অর্ডার ${selectedOrder.order_number} এর স্ট্যাটাস: ${getStatusLabel(newStatus)}`,
         });
       }
 
