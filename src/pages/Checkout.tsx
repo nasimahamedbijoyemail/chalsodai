@@ -25,7 +25,6 @@ const Checkout = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [guestPassword, setGuestPassword] = useState('');
-  const bkashNumber = '';
   const paymentMethod: PaymentMethod = 'cod';
 
   const [submitted, setSubmitted] = useState(false);
@@ -80,10 +79,6 @@ const Checkout = () => {
       toast.error('সব তথ্য পূরণ করুন।');
       return;
     }
-    if (paymentMethod === 'bkash' && !bkashNumber.trim()) {
-      toast.error('বিকাশ ট্রানজেকশন আইডি দিন।');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -132,7 +127,7 @@ const Checkout = () => {
             customer_name: name,
             customer_phone: phone,
             customer_address: address,
-            bkash_number: paymentMethod === 'bkash' ? bkashNumber : null,
+            bkash_number: null,
             payment_method: paymentMethod,
             total_amount: grandTotal,
             delivery_charge: DELIVERY_CHARGE,
@@ -155,7 +150,7 @@ const Checkout = () => {
               customer_name: name,
               customer_phone: phone,
               customer_address: address,
-              bkash_number: paymentMethod === 'bkash' ? bkashNumber : null,
+              bkash_number: null,
               payment_method: paymentMethod,
               total_amount: grandTotal,
               delivery_charge: DELIVERY_CHARGE,
@@ -207,7 +202,7 @@ const Checkout = () => {
           customerPhone: phone,
           customerAddress: address,
           paymentMethod,
-          bkashNumber: paymentMethod === 'bkash' ? bkashNumber : null,
+          bkashNumber: null,
           deliveryCharge: DELIVERY_CHARGE,
           totalAmount: grandTotal,
           items: items.map((i) => ({
@@ -292,7 +287,7 @@ const Checkout = () => {
             <h1 className="text-2xl sm:text-3xl font-bold mb-2">অর্ডার সফল হয়েছে! 🎉</h1>
             <p className="text-muted-foreground mb-6 text-sm sm:text-base leading-relaxed">
               আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে।{' '}
-              {paymentMethod === 'bkash' ? 'অ্যাডমিন পেমেন্ট ভেরিফাই করার পর' : 'ডেলিভারির সময়'}{' '}
+              ডেলিভারির সময়{' '}
               আপনার অর্ডার প্রসেস করা হবে।
             </p>
           </motion.div>
