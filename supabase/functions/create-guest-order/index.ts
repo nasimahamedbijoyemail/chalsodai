@@ -25,7 +25,6 @@ Deno.serve(async (req) => {
       customer_name,
       customer_phone,
       customer_address,
-      bkash_number,
       payment_method,
       total_amount,
       delivery_charge,
@@ -34,7 +33,6 @@ Deno.serve(async (req) => {
       customer_name: string;
       customer_phone: string;
       customer_address: string;
-      bkash_number: string | null;
       payment_method: string;
       total_amount: number;
       delivery_charge: number;
@@ -66,8 +64,8 @@ Deno.serve(async (req) => {
         customer_name: customer_name.trim().slice(0, 120),
         customer_phone: customer_phone.trim().slice(0, 40),
         customer_address: customer_address.trim().slice(0, 500),
-        bkash_number: payment_method === "bkash" ? bkash_number : null,
-        payment_method,
+        bkash_number: null,
+        payment_method: "cod",
         total_amount,
         delivery_charge,
       })

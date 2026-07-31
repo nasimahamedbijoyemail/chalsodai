@@ -19,22 +19,16 @@ interface Order {
 }
 
 const statusLabels: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  pending: { label: 'পেমেন্ট অপেক্ষায়', variant: 'secondary' },
-  payment_received: { label: 'পেমেন্ট গৃহীত', variant: 'default' },
+  pending: { label: 'অর্ডার গৃহীত', variant: 'secondary' },
+  payment_received: { label: 'প্রস্তুত হচ্ছে', variant: 'default' },
   processing: { label: 'প্রস্তুত হচ্ছে', variant: 'default' },
   shipped: { label: 'ডেলিভারিতে', variant: 'default' },
   delivered: { label: 'ডেলিভারি সম্পন্ন', variant: 'outline' },
   cancelled: { label: 'বাতিল', variant: 'destructive' },
 };
 
-// Cash-on-delivery orders have no payment-waiting stage
-const getStatusInfo = (status: string, paymentMethod: string) => {
-  if (paymentMethod === 'cod') {
-    if (status === 'pending') return { label: 'অর্ডার গৃহীত', variant: 'secondary' as const };
-    if (status === 'payment_received') return { label: 'প্রস্তুত হচ্ছে', variant: 'default' as const };
-  }
-  return statusLabels[status] || statusLabels.pending;
-};
+// Cash on delivery only — no payment-waiting stage
+const getStatusInfo = (status: string) => statusLabels[status] || statusLabels.pending;
 
 const MyOrders = () => {
   const { user, loading: authLoading } = useAuth();
@@ -99,7 +93,7 @@ const MyOrders = () => {
 
         <div className="space-y-3">
           {orders.map((order, i) => {
-            const status = getStatusInfo(order.status, order.payment_method);
+            const status = getStatusInfo(order.status);
             return (
               <motion.div
                 key={order.id}
@@ -121,7 +115,7 @@ const MyOrders = () => {
                           day: 'numeric',
                         })}
                         {' · '}
-                        {order.payment_method === 'cod' ? 'ক্যাশ' : 'বিকাশ'}
+                        ক্যাশ অন ডেলিভারি
                       </p>
                     </div>
                     <div className="text-right shrink-0">

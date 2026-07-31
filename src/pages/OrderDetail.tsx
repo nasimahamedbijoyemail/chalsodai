@@ -28,27 +28,20 @@ interface Order {
   customer_phone: string;
   customer_address: string;
   payment_method: string;
-  bkash_number: string | null;
   admin_notes: string | null;
 }
 
 const statusLabels: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  pending: { label: 'পেমেন্ট অপেক্ষায়', variant: 'secondary' },
-  payment_received: { label: 'পেমেন্ট গৃহীত', variant: 'default' },
+  pending: { label: 'অর্ডার গৃহীত', variant: 'secondary' },
+  payment_received: { label: 'প্রস্তুত হচ্ছে', variant: 'default' },
   processing: { label: 'প্রস্তুত হচ্ছে', variant: 'default' },
   shipped: { label: 'ডেলিভারিতে', variant: 'default' },
   delivered: { label: 'ডেলিভারি সম্পন্ন', variant: 'outline' },
   cancelled: { label: 'বাতিল', variant: 'destructive' },
 };
 
-// Cash-on-delivery orders have no payment-waiting stage
-const getStatusInfo = (status: string, paymentMethod: string) => {
-  if (paymentMethod === 'cod') {
-    if (status === 'pending') return { label: 'অর্ডার গৃহীত', variant: 'secondary' as const };
-    if (status === 'payment_received') return { label: 'প্রস্তুত হচ্ছে', variant: 'default' as const };
-  }
-  return statusLabels[status] || statusLabels.pending;
-};
+// Cash on delivery only — no payment-waiting stage
+const getStatusInfo = (status: string) => statusLabels[status] || statusLabels.pending;
 
 const OrderDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -97,7 +90,7 @@ const OrderDetail = () => {
     );
   }
 
-  const status = getStatusInfo(order.status, order.payment_method);
+  const status = getStatusInfo(order.status);
   const subtotal = items.reduce((sum, i) => sum + i.product_price * i.quantity, 0);
 
   return (
@@ -123,7 +116,7 @@ const OrderDetail = () => {
 
         {/* Order Timeline */}
         <div className="mb-6">
-          <OrderTimeline currentStatus={order.status} paymentMethod={order.payment_method} />
+          <OrderTimeline currentStatus={order.status} />
         </div>
 
         {/* Order Items */}
@@ -181,14 +174,11 @@ const OrderDetail = () => {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">পদ্ধতি</span>
-              <span>{order.payment_method === 'bkash' ? 'বিকাশ' : 'ক্যাশ অন ডেলিভারি'}</span>
+              <span>ক্যাশ অন ডেলিভারি</span>
             </div>
-            {order.bkash_number && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">ট্রানজেকশন আইডি</span>
-                <span>{order.bkash_number}</span>
-              </div>
-            )}
+            <p className="text-xs text-muted-foreground pt-1">
+              পণ্য হাতে পাওয়ার সময় ডেলিভারি এজেন্টকে সম্পূর্ণ টাকা পরিশোধ করুন।
+            </p>
           </div>
         </div>
 

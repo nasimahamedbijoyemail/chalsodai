@@ -23,8 +23,6 @@ Deno.serve(async (req) => {
       customerName,
       customerPhone,
       customerAddress,
-      paymentMethod,
-      bkashNumber,
       deliveryCharge,
       totalAmount,
       items = [],
@@ -33,8 +31,6 @@ Deno.serve(async (req) => {
       customerName: string;
       customerPhone: string;
       customerAddress: string;
-      paymentMethod: string;
-      bkashNumber?: string | null;
       deliveryCharge?: number;
       totalAmount: number;
       items: OrderItemPayload[];
@@ -57,8 +53,7 @@ Deno.serve(async (req) => {
       `👤 Name: ${customerName}`,
       `📱 Phone: ${customerPhone}`,
       `📍 Address: ${customerAddress}`,
-      `💳 Payment: ${paymentMethod === "cod" ? "Cash on Delivery" : "bKash"}`,
-      paymentMethod === "bkash" && bkashNumber ? `🔖 TrxID: ${bkashNumber}` : null,
+      `💳 Payment: Cash on Delivery`,
       "",
       "Items:",
       ...items.map(

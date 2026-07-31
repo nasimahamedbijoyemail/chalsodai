@@ -148,7 +148,7 @@ const ProductDetail = () => {
           title={`${product.name} (${product.pack_size})`}
           description={
             product.description ||
-            `${product.name} — ${product.pack_size} প্যাক, দাম ৳${product.price}। চাল সদাই থেকে অনলাইনে অর্ডার করুন, ঢাকায় হোম ডেলিভারি, বিকাশ ও ক্যাশ অন ডেলিভারি।`
+            `${product.name} — ${product.pack_size} প্যাক, দাম ৳${product.price}। চাল সদাই থেকে অনলাইনে অর্ডার করুন, ঢাকায় হোম ডেলিভারি, ক্যাশ অন ডেলিভারি।`
           }
           canonicalPath={`/product/${product.id}`}
           ogType="product"
@@ -206,7 +206,6 @@ const ProductDetail = () => {
                     },
                   },
                   acceptedPaymentMethod: [
-                    { '@type': 'PaymentMethod', name: 'bKash' },
                     { '@type': 'PaymentMethod', name: 'Cash on Delivery' },
                   ],
                 },

@@ -78,7 +78,7 @@ const Index = () => {
       <div>
         <PageHead
           title="ঢাকার সেরা অনলাইন চালের দোকান"
-          description="Chal Sodai (চাল সদাই) — ঢাকার সেরা অনলাইন চালের দোকান। মিনিকেট, নাজিরশাইল, চিনিগুড়া ও বাসমতি চাল ঘরে পৌঁছে দেই। বিকাশ বা ক্যাশ অন ডেলিভারি, ফ্ল্যাট ৳৬০ ডেলিভারি চার্জ। Buy premium rice online in Dhaka — chalsodai.com"
+          description="Chal Sodai (চাল সদাই) — ঢাকার সেরা অনলাইন চালের দোকান। মিনিকেট, নাজিরশাইল, চিনিগুড়া ও বাসমতি চাল ঘরে পৌঁছে দেই। ক্যাশ অন ডেলিভারি, ফ্ল্যাট ৳৬০ ডেলিভারি চার্জ। Buy premium rice online in Dhaka — chalsodai.com"
           canonicalPath="/"
           keywords="চাল কিনুন অনলাইন, ঢাকার সেরা চালের দোকান, best online rice shop Dhaka, buy rice online Bangladesh, বাসমতি চাল, মিনিকেট চাল, নাজিরশাইল, চিনিগুড়া, rice home delivery Bangladesh"
           jsonLd={{
@@ -93,10 +93,10 @@ const Index = () => {
                 image: 'https://www.chalsodai.com/favicon.png',
                 telephone: '+8801777416903',
                 currenciesAccepted: 'BDT',
-                paymentAccepted: 'bKash, Cash on Delivery',
+                paymentAccepted: 'Cash on Delivery',
                 priceRange: '৳৳',
                 description:
-                  'Chal Sodai (চাল সদাই) — the online rice shop for Dhaka, Bangladesh. Premium Miniket, Nazirshail, Chinigura and Basmati rice delivered home with bKash or cash on delivery.',
+                  'Chal Sodai (চাল সদাই) — the online rice shop for Dhaka, Bangladesh. Premium Miniket, Nazirshail, Chinigura and Basmati rice delivered home with cash on delivery.',
                 areaServed: { '@type': 'City', name: 'Dhaka' },
                 address: {
                   '@type': 'PostalAddress',
@@ -141,7 +141,7 @@ const Index = () => {
                     name: 'চাল সদাই কী কী পেমেন্ট নেয়?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'বিকাশ (bKash) এবং ক্যাশ অন ডেলিভারি — দুইভাবেই পেমেন্ট করা যায়।',
+                      text: 'ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে টাকা পরিশোধ করুন।',
                     },
                   },
                   {
@@ -183,7 +183,7 @@ const Index = () => {
                     সেরা মানের চাল, সরাসরি আপনার ঘরে
                   </h1>
                   <p className="text-xs sm:text-sm md:text-base text-primary-foreground/80 max-w-lg">
-                    ঢাকা শহরে দ্রুত ডেলিভারি। বিশ্বস্ত মানের চাল সাশ্রয়ী মূল্যে। বিকাশে সহজ পেমেন্ট।
+                    ঢাকা শহরে দ্রুত ডেলিভারি। বিশ্বস্ত মানের চাল সাশ্রয়ী মূল্যে। ক্যাশ অন ডেলিভারিতে সহজ পেমেন্ট।
                   </p>
                 </motion.div>
                 <motion.div
@@ -210,7 +210,7 @@ const Index = () => {
               {[
                 { icon: Truck, title: 'দ্রুত ডেলিভারি', desc: 'ঢাকায় মাত্র ২৪ ঘণ্টার মধ্যে ডেলিভারি', color: 'text-primary', bg: 'bg-primary/10' },
                 { icon: Shield, title: 'মান নিশ্চিত', desc: '১০০% খাঁটি ও পরীক্ষিত চাল গ্যারান্টি', color: 'text-secondary', bg: 'bg-secondary/10' },
-                { icon: Phone, title: 'সহজ অর্ডার', desc: 'অনলাইনে অর্ডার, বিকাশ বা ক্যাশে পেমেন্ট', color: 'text-accent', bg: 'bg-accent/10' },
+                { icon: Phone, title: 'সহজ অর্ডার', desc: 'অনলাইনে অর্ডার, ক্যাশ অন ডেলিভারিতে পেমেন্ট', color: 'text-accent', bg: 'bg-accent/10' },
               ].map((f, i) => (
                 <motion.div
                   key={f.title}
@@ -365,7 +365,7 @@ const Index = () => {
               {[
                 { name: 'রাহেলা বেগম', location: 'মিরপুর, ঢাকা', text: 'চাল সদাই থেকে প্রথমবার অর্ডার করেছিলাম। চালের মান অসাধারণ, সময়মতো ডেলিভারি পেয়েছি। খুবই সন্তুষ্ট!', rating: 5 },
                 { name: 'মোঃ করিম উদ্দিন', location: 'উত্তরা, ঢাকা', text: 'বাজারে গিয়ে চাল কেনার ঝামেলা থেকে মুক্তি পেলাম। দাম যুক্তিসংগত এবং চালের গুণগত মান চমৎকার।', rating: 5 },
-                { name: 'ফারজানা আক্তার', location: 'ধানমন্ডি, ঢাকা', text: 'বিকাশে পেমেন্ট করা যায় বলে খুবই সুবিধা। ৩ মাস ধরে নিয়মিত অর্ডার করছি, কখনো হতাশ হইনি।', rating: 5 },
+                { name: 'ফারজানা আক্তার', location: 'ধানমন্ডি, ঢাকা', text: 'পণ্য হাতে পেয়ে টাকা দেওয়া যায় বলে খুবই সুবিধা। ৩ মাস ধরে নিয়মিত অর্ডার করছি, কখনো হতাশ হইনি।', rating: 5 },
               ].map((t, i) => (
                 <motion.div
                   key={t.name}
@@ -422,7 +422,7 @@ const Index = () => {
               <Sparkles className="h-8 w-8 mx-auto mb-3 text-secondary opacity-80" />
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">আজই অর্ডার করুন!</h2>
               <p className="text-primary-foreground/75 max-w-lg mx-auto mt-3 text-sm sm:text-base">
-                বিকাশে সহজ পেমেন্ট। ঢাকা শহরে দ্রুত হোম ডেলিভারি। ১০০% মান নিশ্চিত।
+                ক্যাশ অন ডেলিভারিতে সহজ পেমেন্ট। ঢাকা শহরে দ্রুত হোম ডেলিভারি। ১০০% মান নিশ্চিত।
               </p>
             </motion.div>
             <motion.div

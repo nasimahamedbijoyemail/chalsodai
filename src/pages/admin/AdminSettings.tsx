@@ -9,7 +9,6 @@ import { Loader2, Save } from 'lucide-react';
 const settingsConfig = [
   { key: 'contact_phone', label: 'যোগাযোগ ফোন নম্বর', placeholder: '01XXXXXXXXX' },
   { key: 'whatsapp_number', label: 'হোয়াটসঅ্যাপ নম্বর', placeholder: '8801XXXXXXXXX' },
-  { key: 'bkash_number', label: 'বিকাশ নম্বর (পেমেন্টের জন্য)', placeholder: '01XXXXXXXXX' },
   { key: 'facebook_url', label: 'ফেসবুক পেজ লিংক', placeholder: 'https://facebook.com/...' },
   { key: 'youtube_url', label: 'ইউটিউব চ্যানেল লিংক', placeholder: 'https://youtube.com/...' },
   { key: 'instagram_url', label: 'ইনস্টাগ্রাম লিংক', placeholder: 'https://instagram.com/...' },

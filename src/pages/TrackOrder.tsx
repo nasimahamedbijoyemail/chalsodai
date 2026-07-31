@@ -33,21 +33,15 @@ interface TrackedOrder {
 }
 
 const statusLabels: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  pending: { label: 'পেমেন্ট অপেক্ষায়', variant: 'secondary' },
-  payment_received: { label: 'পেমেন্ট গৃহীত', variant: 'default' },
+  pending: { label: 'অর্ডার গৃহীত', variant: 'secondary' },
+  payment_received: { label: 'প্রস্তুত হচ্ছে', variant: 'default' },
   processing: { label: 'প্রস্তুত হচ্ছে', variant: 'default' },
   shipped: { label: 'ডেলিভারিতে', variant: 'default' },
   delivered: { label: 'ডেলিভারি সম্পন্ন', variant: 'outline' },
   cancelled: { label: 'বাতিল', variant: 'destructive' },
 };
 
-const getStatusInfo = (status: string, paymentMethod: string) => {
-  if (paymentMethod === 'cod') {
-    if (status === 'pending') return { label: 'অর্ডার গৃহীত', variant: 'secondary' as const };
-    if (status === 'payment_received') return { label: 'প্রস্তুত হচ্ছে', variant: 'default' as const };
-  }
-  return statusLabels[status] || statusLabels.pending;
-};
+const getStatusInfo = (status: string) => statusLabels[status] || statusLabels.pending;
 
 const TrackOrder = () => {
   const [params] = useSearchParams();
@@ -76,7 +70,7 @@ const TrackOrder = () => {
   };
 
   const subtotal = items.reduce((s, i) => s + i.product_price * i.quantity, 0);
-  const status = order ? getStatusInfo(order.status, order.payment_method) : null;
+  const status = order ? getStatusInfo(order.status) : null;
 
   return (
     <PageTransition>
@@ -136,7 +130,7 @@ const TrackOrder = () => {
               <Badge variant={status.variant} className="text-sm">{status.label}</Badge>
             </div>
 
-            <OrderTimeline currentStatus={order.status} paymentMethod={order.payment_method} />
+            <OrderTimeline currentStatus={order.status} />
 
             <div className="rounded-xl border bg-card p-5 premium-card">
               <h3 className="font-bold mb-4">পণ্যসমূহ</h3>
@@ -162,7 +156,7 @@ const TrackOrder = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">পেমেন্ট পদ্ধতি</span>
-                  <span>{order.payment_method === 'bkash' ? 'বিকাশ' : 'ক্যাশ অন ডেলিভারি'}</span>
+                  <span>ক্যাশ অন ডেলিভারি</span>
                 </div>
                 <div className="flex justify-between font-bold text-base pt-1 border-t">
                   <span>মোট</span>
