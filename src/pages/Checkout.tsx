@@ -25,8 +25,9 @@ const Checkout = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [guestPassword, setGuestPassword] = useState('');
-  const [bkashNumber, setBkashNumber] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
+  const bkashNumber = '';
+  const paymentMethod: PaymentMethod = 'cod';
+
   const [submitted, setSubmitted] = useState(false);
   const [placedOrder, setPlacedOrder] = useState<{
     orderNumber: string;
