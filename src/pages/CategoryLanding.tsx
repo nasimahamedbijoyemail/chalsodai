@@ -96,7 +96,7 @@ const CategoryLanding = () => {
   const description =
     category.seo_description ||
     category.description ||
-    `${category.name} চাল অনলাইনে কিনুন চাল সদাই থেকে। ঢাকায় দ্রুত হোম ডেলিভারি, বিকাশ ও ক্যাশ অন ডেলিভারি, ফ্ল্যাট ৳${DELIVERY_CHARGE} ডেলিভারি চার্জ। Buy ${category.name} rice online in Dhaka.`;
+    `${category.name} চাল অনলাইনে কিনুন চাল সদাই থেকে। ঢাকায় দ্রুত হোম ডেলিভারি, ক্যাশ অন ডেলিভারি, ফ্ল্যাট ৳${DELIVERY_CHARGE} ডেলিভারি চার্জ। Buy ${category.name} rice online in Dhaka.`;
   const path = `/rice/${category.slug}`;
   const prices = products.map((p) => Number(p.price));
 
@@ -185,7 +185,7 @@ const CategoryLanding = () => {
           <p className="text-muted-foreground text-sm sm:text-base max-w-2xl leading-relaxed">{description}</p>
           <div className="flex flex-wrap gap-4 mt-5 text-xs sm:text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5"><Truck className="h-4 w-4 text-primary" /> ঢাকায় হোম ডেলিভারি</span>
-            <span className="flex items-center gap-1.5"><Wallet className="h-4 w-4 text-primary" /> বিকাশ / ক্যাশ অন ডেলিভারি</span>
+            <span className="flex items-center gap-1.5"><Wallet className="h-4 w-4 text-primary" /> ক্যাশ অন ডেলিভারি</span>
             <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-primary" /> মান যাচাই করা চাল</span>
           </div>
         </motion.header>
@@ -227,7 +227,7 @@ const CategoryLanding = () => {
             দিলেই হবে।
           </p>
           <p>
-            পেমেন্ট করতে পারেন বিকাশে অথবা ক্যাশ অন ডেলিভারিতে। ঢাকার ভিতরে ফ্ল্যাট ৳{DELIVERY_CHARGE} ডেলিভারি চার্জ প্রযোজ্য।
+            পেমেন্ট করতে পারেন ক্যাশ অন ডেলিভারিতে — পণ্য হাতে পেয়ে টাকা পরিশোধ। ঢাকার ভিতরে ফ্ল্যাট ৳{DELIVERY_CHARGE} ডেলিভারি চার্জ প্রযোজ্য।
             যেকোনো প্রশ্নে হোয়াটসঅ্যাপ করুন +8801777416903 নম্বরে।
           </p>
           <p>
