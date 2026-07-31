@@ -9,7 +9,7 @@ import { useCartStore } from '@/lib/cartStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { CheckCircle, Loader2, Banknote, Smartphone, Lock, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
+import { CheckCircle, Loader2, Banknote, Lock, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import PageTransition from '@/components/PageTransition';
 import { DELIVERY_CHARGE } from '@/lib/constants';
@@ -35,7 +35,6 @@ const Checkout = () => {
     total: number;
   } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [bkashDisplayNumber, setBkashDisplayNumber] = useState('01786698614');
 
   // Determine if this is a direct buy or cart checkout
   const isBuyNow = buyNowItems.length > 0;
@@ -44,13 +43,6 @@ const Checkout = () => {
   const grandTotal = subtotal + DELIVERY_CHARGE;
 
   useEffect(() => {
-    supabase.from('site_settings').select('key, value').in('key', ['bkash_number'])
-      .then(({ data }) => {
-        data?.forEach(s => {
-          if (s.key === 'bkash_number') setBkashDisplayNumber(s.value);
-        });
-      });
-
     if (user) {
       const fetchProfile = async () => {
         const { data } = await supabase
