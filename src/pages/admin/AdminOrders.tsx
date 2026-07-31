@@ -22,8 +22,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import {
-  Loader2, Search, Eye, Phone, MapPin, CreditCard, Calendar,
-  Package, User, Hash, Banknote, Truck, Clock, CheckCircle,
+  Loader2, Search, Eye, Phone, MapPin, Calendar,
+  Package, User, Banknote, Truck, Clock, CheckCircle,
   XCircle, ShoppingBag, ArrowUpDown,
 } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
