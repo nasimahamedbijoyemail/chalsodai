@@ -31,6 +31,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import TrackOrder from "./pages/TrackOrder";
+import SeoLanding from "./pages/SeoLanding";
 import NotFound from "./pages/NotFound";
 
 // Lazy load admin routes
@@ -96,6 +97,8 @@ const AnimatedRoutes = () => {
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/order/:id" element={<OrderDetail />} />
       <Route path="/track" element={<TrackOrder />} />
+      <Route path="/online-rice-delivery-dhaka" element={<SeoLanding />} />
+      <Route path="/online-grocery-delivery-dhaka" element={<SeoLanding />} />
 
       <Route path="/admin" element={
         <Suspense fallback={<PageSkeleton />}>
