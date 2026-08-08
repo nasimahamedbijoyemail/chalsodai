@@ -11,6 +11,16 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://www.chalsodai.com/online-rice-delivery-dhaka</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.chalsodai.com/online-grocery-delivery-dhaka</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.chalsodai.com/faq</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
