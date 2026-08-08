@@ -31,6 +31,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import TrackOrder from "./pages/TrackOrder";
+import SeoLanding from "./pages/SeoLanding";
 import NotFound from "./pages/NotFound";
 
 // Lazy load admin routes
