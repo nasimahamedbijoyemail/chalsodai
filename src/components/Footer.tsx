@@ -22,6 +22,8 @@ const Footer = () => {
   const quickLinks = [
     { to: '/', label: 'হোম', icon: Home },
     { to: '/categories', label: 'চালের ধরণ', icon: ShoppingBag },
+    { to: '/online-rice-delivery-dhaka', label: 'ঢাকায় অনলাইনে চাল অর্ডার', icon: ShoppingBag },
+    { to: '/online-grocery-delivery-dhaka', label: 'অনলাইন গ্রোসারি ডেলিভারি', icon: ShoppingBag },
     { to: '/track', label: 'অর্ডার ট্র্যাক', icon: PackageSearch },
     { to: '/faq', label: 'সাধারণ জিজ্ঞাসা', icon: HelpCircle },
     { to: '/contact', label: 'যোগাযোগ', icon: Mail },
