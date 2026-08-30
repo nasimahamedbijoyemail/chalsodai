@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Phone, MapPin, MessageCircle, Facebook, ShoppingBag, HelpCircle, Home, Mail, Wheat, ArrowUpRight, Heart, PackageSearch } from 'lucide-react';
+import { Phone, MapPin, MessageCircle, Facebook, ShoppingBag, HelpCircle, Home, Mail, Wheat, ArrowUpRight, PackageSearch } from 'lucide-react';
 
 const Footer = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -146,11 +146,8 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="mt-10 pt-6 border-t border-border/50">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-muted-foreground">
             <p>© ২০২৫ CHAL SODAI (চাল সদাই)। সর্বস্বত্ব সংরক্ষিত।</p>
-            <p className="flex items-center gap-1">
-              তৈরি করা হয়েছে <Heart className="h-3 w-3 text-destructive fill-destructive" /> দিয়ে, বাংলাদেশ থেকে
-            </p>
           </div>
         </div>
       </div>
